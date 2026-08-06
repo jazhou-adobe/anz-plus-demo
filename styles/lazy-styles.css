@@ -1,1 +1,16 @@
 /* add global styles that can be loaded post LCP here */
+
+/* eyebrow / pill label - used above headings for small category labels
+   (e.g. "Included account", "Optional account") matching the source site's
+   pill-badge treatment rather than plain uppercase text */
+p.eyebrow {
+  display: inline-block;
+  margin: 0 0 8px;
+  border-radius: 999px;
+  background-color: var(--light-color);
+  padding: 4px 14px;
+  color: var(--brand-navy);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+}
+

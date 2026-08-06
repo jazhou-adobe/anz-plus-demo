@@ -25,3 +25,22 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
+
+/* accounts-cards variant: icon illustration + eyebrow + heading + outline CTA */
+.cards.accounts-cards > ul > li {
+  border-color: #e2e2e2;
+}
+
+.cards.accounts-cards .cards-card-image img {
+  aspect-ratio: auto;
+  width: auto;
+  max-width: 60%;
+  object-fit: contain;
+}
+
+.cards.accounts-cards a.button {
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}

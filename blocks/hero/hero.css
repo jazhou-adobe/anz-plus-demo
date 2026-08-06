@@ -5,20 +5,59 @@
 
 .hero {
   position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 24px;
+  min-height: 420px;
+  overflow: hidden;
+  background-color: var(--brand-navy);
+}
+
+/* dark scrim so white heading/copy stay legible over any source photo */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgb(0 0 0 / 15%) 0%, rgb(0 0 0 / 55%) 100%);
+}
+
+.hero h1,
+.hero p {
+  max-width: 640px;
+  color: var(--background-color);
 }
 
 .hero h1 {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 0;
+  font-size: var(--heading-font-size-xl);
+}
+
+.hero p {
+  font-size: var(--body-font-size-m);
+}
+
+.hero .button-wrapper {
+  margin-top: 16px;
+}
+
+.hero .button.secondary {
+  border-color: var(--background-color);
+  color: var(--background-color);
+}
+
+.hero .button.secondary:hover,
+.hero .button.secondary:focus-visible {
+  border-color: var(--background-color);
+  background-color: rgb(255 255 255 / 15%);
   color: var(--background-color);
 }
 
 .hero picture {
   position: absolute;
-  z-index: -1;
+  z-index: -2;
   inset: 0;
   object-fit: cover;
   box-sizing: border-box;
@@ -30,8 +69,20 @@
   height: 100%;
 }
 
+@media (width >= 600px) {
+  .hero h1 {
+    font-size: var(--heading-font-size-xxl);
+  }
+}
+
 @media (width >= 900px) {
   .hero {
-    padding: 40px 32px;
+    padding: 96px 32px;
+    min-height: 520px;
+  }
+
+  .hero h1,
+  .hero p {
+    max-width: 720px;
   }
 }

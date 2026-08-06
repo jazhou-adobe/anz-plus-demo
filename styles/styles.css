@@ -11,46 +11,43 @@
  */
 
 :root {
-  /* colors */
+  /* colors - extracted from live anz.com.au/plus computed styles */
   --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  --light-color: #f4f2fa;
+  --dark-color: #4a4458;
+  --text-color: #1d164c;
+  --link-color: #006bde;
+  --link-hover-color: #0052ab;
+  --brand-navy: #1d164c;
+  --brand-accent: #006bde;
 
-  /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  /* fonts (Aeonik is a Typekit/self-hosted brand font on anz.com.au; falls back to
+     system sans on localhost since font-serving is domain-locked) */
+  --body-font-family: aeonik, aeonik-fallback, 'Helvetica Neue', helvetica, arial, sans-serif;
+  --heading-font-family: aeonik, aeonik-fallback, 'Helvetica Neue', helvetica, arial, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
   --body-font-size-s: 19px;
   --body-font-size-xs: 17px;
 
-  /* heading sizes */
-  --heading-font-size-xxl: 55px;
+  /* heading sizes (source h1 hero: 64px desktop / accounts h1: 92px desktop) */
+  --heading-font-size-xxl: 64px;
   --heading-font-size-xl: 44px;
   --heading-font-size-l: 34px;
   --heading-font-size-m: 27px;
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
-  /* nav height */
-  --nav-height: 64px;
+  /* nav height (source header measured at 72px) */
+  --nav-height: 72px;
 }
 
 /* fallback fonts */
 @font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
-  src: local('Arial');
-}
-
-@font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
-  src: local('Arial');
+  font-family: aeonik-fallback;
+  size-adjust: 100%;
+  src: local('Helvetica Neue'), local('Arial');
 }
 
 @media (width >= 900px) {
@@ -61,7 +58,7 @@
     --body-font-size-xs: 14px;
 
     /* heading sizes */
-    --heading-font-size-xxl: 45px;
+    --heading-font-size-xxl: 56px;
     --heading-font-size-xl: 36px;
     --heading-font-size-l: 28px;
     --heading-font-size-m: 22px;
@@ -197,10 +194,12 @@ button.button:disabled {
   pointer-events: none;
 }
 
+/* source site's primary CTAs (hero, sub-banner panels, app-join) are solid brand-accent
+   blue, not the boilerplate-default navy/black - matched here */
 a.button.primary,
 button.button.primary {
-  border-color: var(--text-color);
-  background-color: var(--text-color);
+  border-color: var(--link-color);
+  background-color: var(--link-color);
   color: var(--background-color);
 }
 
@@ -208,9 +207,9 @@ a.button.primary:hover,
 a.button.primary:focus-visible,
 button.button.primary:hover,
 button.button.primary:focus-visible {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  border-color: var(--link-hover-color);
+  background-color: var(--link-hover-color);
+  color: var(--background-color);
 }
 
 a.button.primary[aria-disabled="true"],
@@ -224,20 +223,21 @@ button.button.primary:disabled:focus-visible {
   color: var(--dark-color);
 }
 
+/* source site's secondary CTAs (accounts page cards) are blue-outline pills */
 a.button.secondary,
 button.button.secondary {
-  border-color: var(--text-color);
+  border-color: var(--link-color);
   background-color: transparent;
-  color: var(--text-color);
+  color: var(--link-color);
 }
 
 a.button.secondary:hover,
 a.button.secondary:focus-visible,
 button.button.secondary:hover,
 button.button.secondary:focus-visible {
-  border-color: var(--dark-color);
+  border-color: var(--link-hover-color);
   background-color: var(--light-color);
-  color: var(--dark-color);
+  color: var(--link-hover-color);
 }
 
 a.button.secondary[aria-disabled="true"],
@@ -322,4 +322,12 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* the metadata block is stripped server-side by the production EDS pipeline before
+   the page ever reaches the browser; the local aem-cli --html-folder preview does
+   NOT perform that strip, so hide it defensively here to avoid it rendering as
+   visible text during local development. */
+main .section.metadata {
+  display: none;
 }
