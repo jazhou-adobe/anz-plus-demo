@@ -10,27 +10,35 @@ footer .footer > div {
   padding: 40px 24px 24px;
 }
 
-/* the fragment's own top-level section div - this is the actual grid parent
-   (one level deeper than the fragment wrapper div above) */
-footer .footer > div > div {
+/* section 1: logo */
+footer .footer > div > div:first-child img {
+  height: 32px;
+  width: auto;
+}
+
+/* section 3: app badges + legal text */
+footer .footer > div > div:last-child {
+  border-top: 1px solid rgb(29 22 76 / 12%);
+  padding-top: 24px;
+}
+
+footer .footer > div > div:last-child p:first-child img {
+  height: 40px;
+  width: auto;
+  margin-right: 12px;
+}
+
+/* section 2: link columns, authored as a `columns` block variant so the
+   per-column divs survive the DA content pipeline (bare grouping divs
+   outside a recognized block get flattened) */
+footer .footer .columns.footer-links > div {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px 24px;
 }
 
-footer .footer > div > div > div:first-child {
-  grid-column: 1 / -1;
-}
-
-footer .footer > div > div > div:first-child img {
-  height: 32px;
-  width: auto;
-}
-
-footer .footer > div > div > div:last-child {
-  grid-column: 1 / -1;
-  border-top: 1px solid rgb(29 22 76 / 12%);
-  padding-top: 24px;
+footer .footer .columns.footer-links > div > div {
+  flex: unset;
 }
 
 footer .footer h3 {
@@ -57,14 +65,8 @@ footer .footer p {
   margin: 0 0 12px;
 }
 
-footer .footer > div > div > div:last-child p:first-child img {
-  height: 40px;
-  width: auto;
-  margin-right: 12px;
-}
-
 @media (width >= 600px) {
-  footer .footer > div > div {
+  footer .footer .columns.footer-links > div {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -74,7 +76,7 @@ footer .footer > div > div > div:last-child p:first-child img {
     padding: 48px 32px 24px;
   }
 
-  footer .footer > div > div {
+  footer .footer .columns.footer-links > div {
     grid-template-columns: repeat(4, 1fr);
   }
 }

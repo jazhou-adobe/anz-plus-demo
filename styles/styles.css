@@ -323,11 +323,3 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
-
-/* the metadata block is stripped server-side by the production EDS pipeline before
-   the page ever reaches the browser; the local aem-cli --html-folder preview does
-   NOT perform that strip, so hide it defensively here to avoid it rendering as
-   visible text during local development. */
-main .section.metadata {
-  display: none;
-}
