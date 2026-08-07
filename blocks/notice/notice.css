@@ -26,6 +26,44 @@
   margin-top: 20px;
 }
 
+/* fee-row list — a plain <ul><li><p>label</p><p>value</p></li></ul>, used instead of
+   a <table> (DA's round-trip treats a literal <table> as an EDS block-table and
+   silently consumes its first row as a "block name"). Scoped to <li> containing two
+   <p> children so ordinary bulleted lists elsewhere in a notice are unaffected. */
+.notice .notice-content ul:has(> li > p + p) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notice .notice-content ul li:has(p + p) {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgb(0 0 0 / 10%);
+}
+
+.notice .notice-content ul li:has(p + p):last-child {
+  border-bottom: none;
+}
+
+.notice .notice-content ul li:has(p + p) p {
+  margin: 0;
+}
+
+.notice .notice-content ul li:has(p + p) p:first-child {
+  font-weight: 700;
+  flex: 1 1 200px;
+}
+
+.notice .notice-content ul li:has(p + p) p:last-child {
+  color: #4a4a4a;
+  flex: 2 1 260px;
+}
+
 @media (width >= 900px) {
   .notice {
     flex-direction: row;
