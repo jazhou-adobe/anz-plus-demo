@@ -1,3 +1,6 @@
+/* stylelint-disable no-descending-specificity -- rules grouped by section
+   (intro / inputs / results / disclaimer) for readability, not specificity order */
+
 /* hls-calculator — static refinance calculator (default state)
    NOTE: authored content here uses only <p>/<h3>/<ul><li> at the top level of
    each cell — no <dl> (DA's round-trip converts it to <ul><li><p></p><p></p></li></ul>)

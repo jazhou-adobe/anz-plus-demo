@@ -1,3 +1,6 @@
+/* stylelint-disable no-descending-specificity -- rules grouped by variant
+   (base / blue / photo) for readability, not specificity order */
+
 /* the sub-banner panels sit on a continuous light-grey band */
 main .section:has(.panel) {
   margin: 0;

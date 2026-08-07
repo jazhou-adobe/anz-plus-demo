@@ -1,3 +1,6 @@
+/* stylelint-disable no-descending-specificity -- rules grouped by variant
+   (base / pill / center / band / fee-row list) for readability, not specificity order */
+
 .notice {
   display: flex;
   flex-direction: column;
