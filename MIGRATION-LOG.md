@@ -230,6 +230,16 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
     pipeline, so it can't reproduce DA-side corruption. Treat `/<slug>` on localhost (or the real
     `aem.page` preview) as the DA-fidelity check, and `/drafts/<slug>` as the code-fidelity check —
     they test different things and both must be green. (T21.)
+16. **`width: 100vw` full-bleed breakouts need `box-sizing: border-box`** — without it, horizontal
+    padding is added on top of the 100vw width instead of being absorbed within it, causing
+    page-wide horizontal overflow at any viewport, invisible at typical desktop widths but severe
+    at 2K+ (760px of padding per side inflated a panel to 4080px on a 2560px viewport). A block
+    with `flex:1` image children compounds this into ~2x image upscaling and ballooned section
+    height. (T22.)
+17. **Don't assume a design token from a single reference screenshot** — T17 pinned the hero to
+    ~480px from a user-supplied image; precise cross-width measurement in T22 found the real value
+    is a fixed 640px. Measure the *live* source at multiple widths before calling a value final.
+    (T22.)
 
 ### T13 — Header mega-menu dropdown + batch deploy to preview ✅
 - **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
@@ -448,6 +458,42 @@ glance (image gone, but heading/copy still flowed in the right place as unstyled
   content one level deeper than the row `<div>` itself (row → cell → content), even for
   single-child rows — this is now the checklist item to catch before upload, not after.
 
+### T22 — User-prompted 2K fidelity sweep found two ultra-wide layout bugs ✅
+User asked for a hero-block diff between `localhost:3000/` and `anz.com.au/plus`, then a broader
+benefits-page fidelity check, both explicitly **at 2K (2560px) viewport** — a width no prior
+session pass had tested (all earlier fidelity work used 1440px). Found and fixed two real,
+viewport-dependent bugs invisible at normal desktop widths:
+- **Hero (homepage + shared across pages):** measured source precisely at 1440/1920/2560px —
+  its hero is a **fixed 640px height**, capped at **max-width 1920px** (centered beyond that,
+  matching my earlier T18 assumption of ~480px was wrong), and its text sits inset ~10% of hero
+  width from the edge (via the source's own grid container), not flush against a small fixed
+  padding. Fixed `hero.css`: `max-width:1920px; margin:0 auto`, `min-height:640px`, and
+  horizontal padding derived from *our own* 1200px content-width convention —
+  `max(32px, calc((min(100vw, 1920px) - 1200px) / 2))` — clamped so it never exceeds what the
+  1920px-capped hero can actually render (avoids blindly using `50vw`, which would overshoot
+  once the hero itself stops growing at the cap).
+- **`feature-panel.blue/navy/sky` and `rate-card` (benefits + every page using these full-bleed
+  colour panels):** both set `width: 100vw` and add horizontal padding **without
+  `box-sizing: border-box`** — so the padding was added *on top of* the 100vw width instead of
+  being absorbed within it. At 2560px viewport this inflated the actual rendered panel to
+  **4080px** (2560 + 2×760px padding), causing genuine **page-wide horizontal overflow**
+  (`scrollWidth` 4080 vs `clientWidth` 2560) and, because the flex-child image/QR columns compute
+  their width from that oversized box, a 600×831px phone-mockup image and a 600×600px QR code
+  were both **upscaled ~2.1x past their native resolution** (1248px rendered), ballooning two
+  panel sections to 1900px+ tall and visually bleeding into the next section. Fixed by adding
+  `box-sizing: border-box` to both blocks — confirmed on re-check: zero horizontal overflow,
+  images render near-native size (488×676 / 488×488), and total benefits-page height dropped
+  from 11,026px to 9,213px.
+- Both fixes verified locally, then on the live DA preview at 1440/1920/2560px, confirming normal
+  desktop/tablet/mobile widths (all ≤1920px, unaffected by the max-width caps) render identically
+  to before — these were purely ultra-wide-viewport regressions.
+- **New standing check:** any block using the `width: 100vw; margin-left: calc(50% - 50vw)`
+  full-bleed breakout pattern **must** also declare `box-sizing: border-box`, or padding silently
+  inflates the box past the viewport. Grepped the whole `blocks/` tree for this pattern to confirm
+  only `feature-panel` and `rate-card` used it (other full-bleed sections — `usps`, `panel`,
+  `appjoin` — color the section wrapper directly instead, which doesn't have this failure mode).
+- Commits: `946abf1`, `eae48c1`.
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (24 blocks incl. new `table`) + measured tokens +
@@ -460,11 +506,10 @@ glance (image gone, but heading/copy still flowed in the right place as unstyled
 - **Nav/footer:** internal links point at local migrated slugs; footer now includes the
   acknowledgement-of-country card and the "ANZ Plus Credit Guide" link.
 - **Fidelity status:** every page has been individually compared against its live source at least
-  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Four genuine DA round-trip
-  data-loss/degradation bugs were found and fixed (T20/T21) that would otherwise have silently
-  shipped broken content on every future content edit to those pages — the `notice` block in
-  particular required a second pass (T21) because the T20 sweep didn't happen to touch every
-  `notice` usage.
+  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Six genuine bugs found and
+  fixed across T20-T22 that would otherwise have silently shipped broken content — four DA
+  round-trip data-loss/degradation bugs (T20/T21) plus two viewport-dependent layout bugs only
+  visible at 2K+ widths (T22, hero sizing + full-bleed panel overflow/image-upscale).
 - **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
@@ -477,7 +522,8 @@ glance (image gone, but heading/copy still flowed in the right place as unstyled
 
 ---
 
-*Last updated: 2026-08-07 (through T21: user-prompted `localhost:3000` vs `/drafts/index` diff
-uncovered a silent `notice`-block failure on 5 pages, fixed and re-verified against the DA-served
-output directly, not just screenshots; live publish pending user review).*
+*Last updated: 2026-08-07 (through T22: user-prompted 2K-viewport fidelity checks found the hero's
+height/max-width/text-inset were all measured wrong and a `box-sizing` bug causing full-bleed
+panels to overflow + upscale images ~2x at ultra-wide widths; both fixed and verified at
+1440/1920/2560px; live publish pending user review).*
 
