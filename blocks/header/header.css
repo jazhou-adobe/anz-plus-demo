@@ -318,22 +318,28 @@ header nav .nav-sections ul > li > ul > li {
     font-weight: 400;
   }
 
-  /* featured (grey) column: icon + title + description cards */
+  /* featured (grey) column: icon | (title over description) cards */
   .mega .mega-featured > a {
     display: grid;
     grid-template-columns: 64px 1fr;
-    align-items: center;
+    place-items: center start;
     gap: 20px;
     padding: 14px 0;
-    color: #6f6f6f;
-    font-size: var(--body-font-size-xs);
+    text-align: left;
   }
 
   .mega .mega-featured > a::after {
     content: none;
   }
 
-  .mega .mega-featured > a img {
+  .mega .mega-featured > a picture {
+    display: block;
+    line-height: 0;
+  }
+
+  .mega .mega-featured > a > img,
+  .mega .mega-featured > a > picture {
+    box-sizing: border-box;
     width: 64px;
     height: 64px;
     border-radius: 14px;
@@ -342,15 +348,29 @@ header nav .nav-sections ul > li > ul > li {
     object-fit: contain;
   }
 
-  .mega .mega-featured > a strong {
+  .mega .mega-featured > a picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .mega .mega-featured .mega-card-text {
+    display: block;
+    color: #6f6f6f;
+    font-size: var(--body-font-size-xs);
+    line-height: 1.4;
+  }
+
+  .mega .mega-featured .mega-card-text strong {
     display: block;
     margin-bottom: 2px;
+    color: var(--brand-navy);
     font-size: var(--heading-font-size-l);
     font-weight: 500;
   }
 
   /* link columns: arrow rows */
-  .mega .mega-col > a {
+  .mega .mega-col:not(.mega-featured) > a {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -362,7 +382,7 @@ header nav .nav-sections ul > li > ul > li {
     line-height: 1.3;
   }
 
-  .mega .mega-col > a::after {
+  .mega .mega-col:not(.mega-featured) > a::after {
     content: '→';
     color: var(--brand-navy);
     font-weight: 400;

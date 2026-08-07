@@ -125,7 +125,8 @@ function buildMegaMenu(navSection) {
   const groups = [];
   let current = null;
   [...ul.children].forEach((li) => {
-    const link = li.querySelector(':scope > a');
+    // an item's link may be wrapped in a <p> by the DA editor — match it either way
+    const link = li.querySelector('a');
     if (!link) {
       current = { heading: li.textContent.trim(), items: [] };
       groups.push(current);
@@ -156,6 +157,17 @@ function buildMegaMenu(navSection) {
     group.items.forEach((a) => {
       if (/\(NEW\)/i.test(a.textContent)) {
         a.innerHTML = a.innerHTML.replace(/\s*\(NEW\)/i, ' <span class="mega-badge">NEW</span>');
+      }
+      const pic = a.querySelector(':scope > picture, :scope > img');
+      if (isFeatured && pic) {
+        // wrap the title + description (everything but the icon) so they stack in one cell
+        const textWrap = document.createElement('span');
+        textWrap.className = 'mega-card-text';
+        [...a.childNodes].forEach((node) => {
+          if (node === pic) return;
+          textWrap.append(node);
+        });
+        a.append(textWrap);
       }
       col.append(a);
     });
@@ -197,17 +209,26 @@ export default async function decorate(block) {
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
+      // the DA editor wraps a lone label link in a <p>; unwrap it so the label is a
+      // direct child <a> (keeps the header height right and the chevron/click selectors working)
+      const labelP = navSection.querySelector(':scope > p');
+      if (labelP && labelP.querySelector('a')) labelP.replaceWith(...labelP.childNodes);
       if (navSection.querySelector('ul')) {
         navSection.classList.add('nav-drop');
         // eslint-disable-next-line no-use-before-define
         buildMegaMenu(navSection);
       }
-      navSection.addEventListener('click', () => {
-        if (isDesktop.matches) {
-          const expanded = navSection.getAttribute('aria-expanded') === 'true';
-          toggleAllNavSections(navSections);
-          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        }
+      const isDrop = navSection.classList.contains('nav-drop');
+      navSection.addEventListener('click', (e) => {
+        if (!isDesktop.matches) return;
+        const topLink = navSection.querySelector(':scope > a');
+        // only the top-level label toggles the menu; submenu links navigate normally
+        if (!topLink || !(e.target === topLink || topLink.contains(e.target))) return;
+        // a drop label toggles the mega-menu instead of navigating
+        if (isDrop) e.preventDefault();
+        const expanded = navSection.getAttribute('aria-expanded') === 'true';
+        toggleAllNavSections(navSections);
+        navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
       });
     });
   }
