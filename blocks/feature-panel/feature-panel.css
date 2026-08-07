@@ -95,6 +95,7 @@
 .feature-panel.blue,
 .feature-panel.navy,
 .feature-panel.sky {
+  box-sizing: border-box;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   padding: 56px 24px;

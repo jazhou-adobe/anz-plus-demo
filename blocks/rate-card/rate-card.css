@@ -1,4 +1,5 @@
 .rate-card {
+  box-sizing: border-box;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   padding: 48px 24px;
