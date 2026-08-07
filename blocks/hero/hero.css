@@ -6,25 +6,30 @@
 .hero {
   position: relative;
   isolation: isolate;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 64px 24px;
-  min-height: 420px;
+  padding: 40px 24px;
+  min-height: 360px;
   overflow: hidden;
   background-color: var(--brand-navy);
 }
 
-/* dark scrim so white heading/copy stay legible over the photo — weighted to the
-   left where the text sits, matching the source hero */
+/* strong dark scrim on the left where the text sits, fading to reveal the photo —
+   matching the source hero */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(90deg, rgb(0 0 0 / 72%) 0%, rgb(0 0 0 / 45%) 40%, rgb(0 0 0 / 0%) 75%),
-    linear-gradient(180deg, rgb(0 0 0 / 20%) 0%, rgb(0 0 0 / 35%) 100%);
+  background: linear-gradient(
+    90deg,
+    rgb(0 0 0 / 88%) 0%,
+    rgb(0 0 0 / 72%) 28%,
+    rgb(0 0 0 / 20%) 55%,
+    rgb(0 0 0 / 0%) 78%
+  );
 }
 
 .hero h1,
@@ -74,12 +79,15 @@
 
 @media (width >= 900px) {
   .hero {
-    padding: 96px 32px;
-    min-height: 520px;
+    padding: 56px 32px;
+    min-height: 480px;
   }
 
-  .hero h1,
+  .hero h1 {
+    max-width: 520px;
+  }
+
   .hero p {
-    max-width: 560px;
+    max-width: 480px;
   }
 }

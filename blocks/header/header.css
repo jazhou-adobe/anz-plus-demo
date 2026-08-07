@@ -296,19 +296,25 @@ header nav .nav-sections ul > li > ul > li {
     right: 0;
     top: 100%;
     z-index: 3;
+    box-sizing: border-box;
+    height: 629px;
     white-space: initial;
-    background: linear-gradient(to right, #f4f3f4 0 34%, #fff 34% 100%);
+    background: linear-gradient(to right, #f4f3f4 0 423px, #fff 423px 100%);
     box-shadow: 0 16px 24px rgb(29 22 76 / 10%);
     border-top: 1px solid #ececec;
   }
 
   .mega .mega-inner {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 32px 40px;
-    max-width: 1264px;
-    margin: 0 auto;
-    padding: 40px 32px 48px;
+    grid-template-columns: 600px 240px 240px 1fr;
+    gap: 0 48px;
+    padding: 40px 0 48px;
+  }
+
+  /* featured column overhangs the 423px grey panel (grey bleeds to the left edge);
+     content inset to align with the page */
+  .mega .mega-featured {
+    padding-left: 88px;
   }
 
   .mega .mega-heading {
@@ -367,6 +373,11 @@ header nav .nav-sections ul > li > ul > li {
     color: var(--brand-navy);
     font-size: var(--heading-font-size-l);
     font-weight: 500;
+  }
+
+  .mega .mega-featured > a:hover .mega-card-text strong {
+    color: var(--link-color);
+    text-decoration: underline;
   }
 
   /* link columns: arrow rows */

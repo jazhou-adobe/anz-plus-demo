@@ -82,7 +82,7 @@ main .section:has(.panel) {
 
 /* light-blue tint */
 .panel-tint {
-  background-color: #e5f1ff;
+  background-color: #e2f6fd;
   color: var(--brand-navy);
 }
 
