@@ -1,10 +1,14 @@
-/* hls-calculator — static refinance calculator (default state) */
+/* hls-calculator — static refinance calculator (default state)
+   NOTE: authored content here uses only <p>/<h3>/<ul><li> at the top level of
+   each cell — no <dl> (DA's round-trip converts it to <ul><li><p></p><p></p></li></ul>)
+   and no extra wrapper <div>s or classes inside a cell (DA's round-trip drops both).
+   Styling below therefore targets structural position (nth-of-type / first-child /
+   last-child), which is identical locally and on DA. */
 
 /* the whole intro section (hero heading + calculator + disclaimer) sits on grey */
 main .section:has(> .hls-calculator-wrapper) {
   background: #f2f2f2;
 }
-
 
 .hls-calculator > div {
   display: grid;
@@ -14,48 +18,36 @@ main .section:has(> .hls-calculator-wrapper) {
 }
 
 /* ---------- inputs column ---------- */
-.hls-calculator .hls-calculator-inputs dl {
+.hls-calculator .hls-calculator-inputs ul {
+  list-style: none;
   margin: 0;
+  padding: 0;
 }
 
-.hls-calculator .hls-calculator-inputs dt {
-  font-size: 0.85rem;
-  color: #4a4a4a;
-  margin: 18px 0 6px;
-}
-
-.hls-calculator .hls-calculator-inputs dt:first-child {
-  margin-top: 0;
-}
-
-.hls-calculator .hls-calculator-inputs dd {
-  margin: 0;
+.hls-calculator .hls-calculator-inputs li {
   border: 1px solid #b4b4b4;
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: #fff;
-  font-size: 1rem;
-  color: #1e1e1e;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  margin: 0 0 16px;
 }
 
-.hls-calculator .hls-calculator-inputs .hls-calc-adorn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin: -6px 0 -6px -6px;
-  border-radius: 6px;
-  background: #f2f2f2;
+.hls-calculator .hls-calculator-inputs li p:first-child {
+  margin: 0 0 4px;
+  font-size: 0.85rem;
   color: #4a4a4a;
-  font-weight: 700;
 }
 
-.hls-calculator .hls-calculator-inputs .hls-calc-tips {
-  margin: 18px 0 0;
+.hls-calculator .hls-calculator-inputs li p:last-child {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e1e1e;
+}
+
+/* trailing "Key terms and extra tips" line — the only plain <p> in this cell */
+.hls-calculator .hls-calculator-inputs > p {
+  margin: 0;
   border: 1px solid #d8d8d8;
   border-radius: 8px;
   padding: 12px 14px;
@@ -72,7 +64,8 @@ main .section:has(> .hls-calculator-wrapper) {
   box-shadow: 0 2px 18px rgb(0 0 0 / 8%);
 }
 
-.hls-calculator .hls-calculator-results .eyebrow {
+/* 1: "Estimated Results" eyebrow */
+.hls-calculator .hls-calculator-results > p:nth-of-type(1) {
   display: inline-block;
   background: #e2f6fd;
   color: #005b7f;
@@ -88,7 +81,7 @@ main .section:has(> .hls-calculator-wrapper) {
   font-size: 1.4rem;
 }
 
-.hls-calculator .hls-calc-tabs {
+.hls-calculator .hls-calculator-results > ul {
   list-style: none;
   display: flex;
   gap: 24px;
@@ -97,79 +90,137 @@ main .section:has(> .hls-calculator-wrapper) {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.hls-calculator .hls-calc-tabs li {
+.hls-calculator .hls-calculator-results > ul li {
   padding-bottom: 8px;
   color: #6a6a6a;
   font-size: 0.95rem;
-  cursor: default;
 }
 
-.hls-calculator .hls-calc-tabs li.is-active {
+/* first tab reads as the active one by default (static state, no live toggling) */
+.hls-calculator .hls-calculator-results > ul li:first-child {
   color: #004165;
   font-weight: 700;
   border-bottom: 2px solid #004165;
 }
 
-.hls-calculator .hls-calc-cap {
+/* small grey captions above a figure */
+.hls-calculator .hls-calculator-results > p:nth-of-type(3),
+.hls-calculator .hls-calculator-results > p:nth-of-type(5),
+.hls-calculator .hls-calculator-results > p:nth-of-type(7),
+.hls-calculator .hls-calculator-results > p:nth-of-type(11),
+.hls-calculator .hls-calculator-results > p:nth-of-type(13) {
   margin: 0;
   font-size: 0.8rem;
   color: #6a6a6a;
 }
 
-.hls-calculator .hls-calc-big {
+/* large dollar figures */
+.hls-calculator .hls-calculator-results > p:nth-of-type(4),
+.hls-calculator .hls-calculator-results > p:nth-of-type(6),
+.hls-calculator .hls-calculator-results > p:nth-of-type(8) {
   margin: 2px 0 0;
   font-size: 1.8rem;
   font-weight: 700;
   color: #1e1e1e;
 }
 
-.hls-calculator .hls-calc-mid {
+/* mid-size rate figures */
+.hls-calculator .hls-calculator-results > p:nth-of-type(12),
+.hls-calculator .hls-calculator-results > p:nth-of-type(14) {
   margin: 2px 0 0;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1e1e1e;
 }
 
-.hls-calculator .hls-calc-mid span,
-.hls-calculator .hls-calc-big span {
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #6a6a6a;
-  margin-left: 2px;
-}
-
-.hls-calculator .hls-calc-primary,
-.hls-calculator .hls-calc-savings > div,
-.hls-calculator .hls-calc-rates > div {
+/* primary repayment figure — a single shared card (3=caption, 4=value) */
+.hls-calculator .hls-calculator-results > p:nth-of-type(3) {
   background: #f7f7f7;
-  border-radius: 10px;
-  padding: 14px 16px;
+  border-radius: 10px 10px 0 0;
+  padding: 14px 16px 0;
+  margin: 16px 0 0;
 }
 
-.hls-calculator .hls-calc-primary {
-  margin: 16px 0 12px;
+.hls-calculator .hls-calculator-results > p:nth-of-type(4) {
+  background: #f7f7f7;
+  border-radius: 0 0 10px 10px;
+  padding: 0 16px 14px;
+  margin: 0 0 12px;
 }
 
-.hls-calculator .hls-calc-savings,
-.hls-calculator .hls-calc-rates {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+/* savings figures — one shared card holding both pairs (5-8), divider between them */
+.hls-calculator .hls-calculator-results > p:nth-of-type(5) {
+  background: #f7f7f7;
+  border-radius: 10px 10px 0 0;
+  padding: 14px 16px 0;
+  margin: 0;
 }
 
-.hls-calculator .hls-calc-note {
+.hls-calculator .hls-calculator-results > p:nth-of-type(6) {
+  background: #f7f7f7;
+  padding: 0 16px 14px;
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-results > p:nth-of-type(7) {
+  background: #f7f7f7;
+  border-top: 1px solid #e8e8e8;
+  padding: 14px 16px 0;
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-results > p:nth-of-type(8) {
+  background: #f7f7f7;
+  border-radius: 0 0 10px 10px;
+  padding: 0 16px 14px;
+  margin: 0 0 12px;
+}
+
+/* plain notes */
+.hls-calculator .hls-calculator-results > p:nth-of-type(9),
+.hls-calculator .hls-calculator-results > p:nth-of-type(15) {
   margin: 10px 0 0;
   font-size: 0.8rem;
   color: #6a6a6a;
 }
 
-.hls-calculator .hls-calc-rate-head {
+.hls-calculator .hls-calculator-results > p:nth-of-type(10) {
   margin: 20px 0 8px;
   font-weight: 700;
   color: #1e1e1e;
 }
 
-.hls-calculator .hls-calc-expand {
+/* rate figures — one shared card holding both pairs (11-14), divider between them */
+.hls-calculator .hls-calculator-results > p:nth-of-type(11) {
+  background: #f7f7f7;
+  border-radius: 10px 10px 0 0;
+  padding: 14px 16px 0;
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-results > p:nth-of-type(12) {
+  background: #f7f7f7;
+  padding: 0 16px 14px;
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-results > p:nth-of-type(13) {
+  background: #f7f7f7;
+  border-top: 1px solid #e8e8e8;
+  padding: 14px 16px 0;
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-results > p:nth-of-type(14) {
+  background: #f7f7f7;
+  border-radius: 0 0 10px 10px;
+  padding: 0 16px 14px;
+  margin: 0;
+}
+
+/* expandable-looking rows (static — no real disclosure behaviour) */
+.hls-calculator .hls-calculator-results > p:nth-of-type(16),
+.hls-calculator .hls-calculator-results > p:nth-of-type(17) {
   margin: 0;
   border-top: 1px solid #e8e8e8;
   padding: 14px 0;
@@ -177,22 +228,20 @@ main .section:has(> .hls-calculator-wrapper) {
   font-weight: 600;
 }
 
-.hls-calculator .hls-calc-expand::after {
+.hls-calculator .hls-calculator-results > p:nth-of-type(16)::after,
+.hls-calculator .hls-calculator-results > p:nth-of-type(17)::after {
   content: '⌄';
   float: right;
   color: #6a6a6a;
 }
 
-.hls-calculator .hls-calc-cta {
+/* CTA row — last paragraph in the cell */
+.hls-calculator .hls-calculator-results > p:last-of-type {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-end;
   margin: 16px 0 0;
-}
-
-.hls-calculator .hls-calc-cta a {
-  margin: 0;
 }
 
 @media (width >= 900px) {
