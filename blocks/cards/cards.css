@@ -73,7 +73,10 @@ main .section:has(.cards.accounts-cards) {
   object-fit: contain;
 }
 
-.cards.accounts-cards .eyebrow {
+/* targeted structurally (first paragraph in the card body), not by the
+   `eyebrow` class: DA's markdown round-trip strips non-block classes,
+   but card DOM order is identical on local drafts and DA. */
+.cards.accounts-cards .cards-card-body p:first-child {
   display: block;
   margin: 0 0 8px;
   padding: 0;

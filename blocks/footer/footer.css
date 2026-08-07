@@ -90,12 +90,11 @@ footer .footer > div > div:nth-child(3) p:not(:first-child) {
   line-height: 1.5;
 }
 
-/* section 4: acknowledgement of country — white card, art left of text */
-footer .footer .footer-acknowledgement {
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  gap: 16px;
+/* section 4: acknowledgement of country — white card, art left of text.
+   Targeted structurally (last footer section) rather than by class: DA's
+   markdown round-trip strips non-block classes like `footer-acknowledgement`,
+   but the section's DOM position is identical on both local drafts and DA. */
+footer .footer > div > div:last-child {
   background: #fff;
   border-radius: 16px;
   padding: 24px;
@@ -103,23 +102,30 @@ footer .footer .footer-acknowledgement {
   text-align: center;
 }
 
-footer .footer .footer-acknowledgement p {
+footer .footer > div > div:last-child .default-content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 16px;
+}
+
+footer .footer > div > div:last-child p {
   margin: 0;
 }
 
-footer .footer .footer-acknowledgement img {
+footer .footer > div > div:last-child img {
   width: 132px;
   height: auto;
   display: block;
 }
 
-footer .footer .footer-acknowledgement p:not(:first-child) {
+footer .footer > div > div:last-child p:not(:first-child) {
   color: #6f6f6f;
   font-size: var(--body-font-size-xs);
   line-height: 1.5;
 }
 
-footer .footer .footer-acknowledgement a:any-link {
+footer .footer > div > div:last-child a:any-link {
   color: #6f6f6f;
   font-size: inherit;
   text-decoration: underline;
@@ -130,15 +136,18 @@ footer .footer .footer-acknowledgement a:any-link {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  footer .footer .footer-acknowledgement {
-    grid-template-columns: auto 1fr;
-    justify-items: start;
-    column-gap: 24px;
+  footer .footer > div > div:last-child {
     padding: 24px 32px;
     text-align: left;
   }
 
-  footer .footer .footer-acknowledgement p:first-child {
+  footer .footer > div > div:last-child .default-content-wrapper {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    column-gap: 24px;
+  }
+
+  footer .footer > div > div:last-child p:first-child {
     grid-row: 1 / span 2;
   }
 }
