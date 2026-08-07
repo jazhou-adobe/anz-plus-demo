@@ -1,0 +1,81 @@
+/* full-bleed brand-blue section */
+main .section:has(.usps) {
+  margin: 0;
+  padding: 56px 0;
+  background-color: var(--brand-blue);
+}
+
+.usps {
+  text-align: center;
+  color: var(--background-color);
+}
+
+.usps .usps-lotus {
+  line-height: 0;
+}
+
+.usps .usps-lotus img {
+  width: 44px;
+  height: auto;
+  filter: brightness(0) invert(1);
+}
+
+.usps h2 {
+  margin-top: 8px;
+  color: var(--background-color);
+}
+
+.usps .usps-intro p {
+  max-width: 640px;
+  margin: 8px auto 0;
+  color: var(--background-color);
+}
+
+.usps .usps-items {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.usps .usps-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.usps .usps-icon {
+  line-height: 0;
+}
+
+.usps .usps-icon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.usps .usps-label p {
+  margin: 0;
+  color: var(--background-color);
+  font-weight: 600;
+}
+
+@media (width >= 900px) {
+  .usps .usps-items {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 44px;
+  }
+
+  .usps .usps-item {
+    flex: 1;
+    max-width: 300px;
+    padding: 0 24px;
+  }
+
+  .usps .usps-item + .usps-item {
+    border-left: 1px solid rgb(255 255 255 / 30%);
+  }
+}

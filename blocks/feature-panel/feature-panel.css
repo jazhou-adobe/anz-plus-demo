@@ -1,0 +1,169 @@
+.feature-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+.feature-panel .feature-panel-image {
+  line-height: 0;
+  width: 100%;
+}
+
+.feature-panel .feature-panel-image img {
+  width: 100%;
+  height: auto;
+}
+
+.feature-panel .feature-panel-content > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.feature-panel .feature-panel-content h1,
+.feature-panel .feature-panel-content h2,
+.feature-panel .feature-panel-content h3 {
+  margin-top: 0;
+}
+
+.feature-panel .feature-panel-content p {
+  font-size: var(--body-font-size-m);
+}
+
+.feature-panel .feature-panel-content .button-wrapper {
+  margin-top: 20px;
+}
+
+/* keep adjacent CTAs side-by-side rather than stacked */
+.feature-panel .feature-panel-content .button-wrapper + .button-wrapper {
+  margin-left: 12px;
+}
+
+.feature-panel.center .feature-panel-content .button-wrapper {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+/* text-only / centered layout */
+.feature-panel.center {
+  text-align: center;
+}
+
+.feature-panel.center .feature-panel-content {
+  max-width: 760px;
+}
+
+/* contained tinted panel (light-blue rounded card) */
+.feature-panel.tint {
+  border-radius: 24px;
+  background-color: #e7f0fc;
+  padding: 32px 24px;
+}
+
+/* full-bleed colour panels break out of the section's max-width */
+.feature-panel.blue,
+.feature-panel.navy,
+.feature-panel.sky {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 56px 24px;
+  color: var(--background-color);
+}
+
+/* light-blue hero panel: centred blue heading with an illustration below */
+.feature-panel.sky {
+  color: var(--text-color);
+  background-color: #e2f6fd;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+.feature-panel.sky h1,
+.feature-panel.sky h2 {
+  color: var(--brand-accent);
+  font-size: var(--heading-font-size-xxl);
+}
+
+.feature-panel.sky .feature-panel-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.feature-panel.sky .feature-panel-image {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.feature-panel.blue {
+  background-color: #0572e6;
+}
+
+.feature-panel.navy {
+  background-color: var(--brand-navy);
+}
+
+.feature-panel.blue h1,
+.feature-panel.blue h2,
+.feature-panel.blue h3,
+.feature-panel.blue p,
+.feature-panel.navy h1,
+.feature-panel.navy h2,
+.feature-panel.navy h3,
+.feature-panel.navy p {
+  color: var(--background-color);
+}
+
+/* white outline secondary CTA on dark panels */
+.feature-panel.blue .button.secondary,
+.feature-panel.navy .button.secondary {
+  border-color: var(--background-color);
+  color: var(--background-color);
+}
+
+.feature-panel.blue .button.secondary:hover,
+.feature-panel.blue .button.secondary:focus-visible,
+.feature-panel.navy .button.secondary:hover,
+.feature-panel.navy .button.secondary:focus-visible {
+  border-color: var(--background-color);
+  background-color: rgb(255 255 255 / 15%);
+  color: var(--background-color);
+}
+
+/* app-store badges / small inline images inside content */
+.feature-panel .feature-panel-content p img {
+  height: 44px;
+  width: auto;
+  vertical-align: middle;
+}
+
+@media (width >= 900px) {
+  .feature-panel {
+    flex-direction: row;
+    gap: 48px;
+  }
+
+  .feature-panel .feature-panel-content,
+  .feature-panel .feature-panel-image {
+    flex: 1;
+  }
+
+  .feature-panel.center {
+    flex-direction: column;
+  }
+
+  .feature-panel.tint {
+    padding: 48px;
+  }
+
+  .feature-panel.blue,
+  .feature-panel.navy {
+    padding: 72px max(32px, calc(50vw - 520px));
+    gap: 64px;
+  }
+
+  /* text-only colour panels keep their content centred and readable */
+  .feature-panel.blue.center .feature-panel-content,
+  .feature-panel.navy.center .feature-panel-content {
+    margin: 0 auto;
+  }
+}

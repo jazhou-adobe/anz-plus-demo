@@ -1,0 +1,98 @@
+/* full-bleed navy section */
+main .section:has(.appjoin) {
+  margin: 0;
+  padding: 56px 0;
+  background-color: var(--brand-navy);
+}
+
+.appjoin > div {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.appjoin h2,
+.appjoin p {
+  color: var(--background-color);
+}
+
+.appjoin h2 {
+  margin-top: 0;
+  font-size: var(--heading-font-size-xl);
+}
+
+.appjoin .appjoin-content p {
+  margin: 12px 0 0;
+}
+
+.appjoin .appjoin-media {
+  text-align: center;
+}
+
+.appjoin .appjoin-media picture {
+  display: inline-block;
+  line-height: 0;
+}
+
+.appjoin .appjoin-media img {
+  width: 168px;
+  height: auto;
+  border-radius: 12px;
+  background-color: var(--background-color);
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.appjoin .appjoin-media p {
+  margin: 12px 0 0;
+  font-weight: 600;
+}
+
+/* gold star rating */
+.appjoin .appjoin-content img[src*="review-star"] {
+  height: 18px;
+  width: auto;
+  margin-right: 1px;
+  vertical-align: text-bottom;
+}
+
+/* app store badges */
+.appjoin .appjoin-content a img {
+  height: 40px;
+  width: auto;
+}
+
+.appjoin .appjoin-content a:has(img) {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.appjoin .button.primary {
+  border-color: var(--background-color);
+  background-color: var(--background-color);
+  color: var(--brand-navy);
+}
+
+.appjoin .button.primary:hover,
+.appjoin .button.primary:focus-visible {
+  border-color: var(--light-color);
+  background-color: var(--light-color);
+  color: var(--brand-navy);
+}
+
+@media (width >= 900px) {
+  .appjoin > div {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  .appjoin .appjoin-content {
+    flex: 1;
+  }
+
+  .appjoin .appjoin-media {
+    flex: none;
+  }
+}

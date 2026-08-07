@@ -1,0 +1,62 @@
+.rate-card {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 48px 24px;
+  background-color: var(--brand-navy);
+  color: var(--background-color);
+  text-align: center;
+}
+
+.rate-card .rate-card-head h2,
+.rate-card .rate-card-head h3 {
+  margin: 0 0 8px;
+  color: var(--background-color);
+}
+
+.rate-card .rate-card-figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px 56px;
+  margin-top: 24px;
+}
+
+.rate-card .rate-card-figure {
+  min-width: 180px;
+}
+
+.rate-card .rate-card-value {
+  margin: 0;
+  color: var(--background-color);
+  line-height: 1;
+}
+
+.rate-card .rate-card-num {
+  font-size: 64px;
+  font-weight: 600;
+}
+
+.rate-card .rate-card-unit {
+  margin-left: 4px;
+  font-size: var(--body-font-size-s);
+  font-weight: 500;
+  vertical-align: baseline;
+}
+
+.rate-card .rate-card-label {
+  margin: 8px 0 0;
+  color: var(--background-color);
+  font-size: var(--body-font-size-s);
+}
+
+@media (width >= 600px) {
+  .rate-card .rate-card-num {
+    font-size: 80px;
+  }
+}
+
+@media (width >= 900px) {
+  .rate-card {
+    padding: 64px 24px;
+  }
+}

@@ -39,3 +39,99 @@
     flex: 1;
   }
 }
+
+/* pill variant — a centered, pill-shaped tinted announcement bar (e.g. Add-Ons) */
+.notice.pill {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 999px;
+  padding: 8px 20px;
+  background-color: #eaf6f2;
+  font-size: var(--body-font-size-s);
+  color: #424242;
+}
+
+.notice.pill .notice-image {
+  order: -1;
+  flex: none;
+  line-height: 0;
+}
+
+.notice.pill .notice-image img {
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
+  object-fit: contain;
+}
+
+.notice.pill .notice-content p {
+  margin: 0;
+}
+
+/* the announcement link is dark grey like the surrounding text, not the brand blue */
+.notice.pill a:any-link {
+  color: #424242;
+  text-decoration: underline;
+}
+
+.notice.pill::after {
+  content: '\2715';
+  margin-left: 4px;
+  color: #424242;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+/* center variant sits on the continuous light-grey band */
+main .section:has(.notice.center) {
+  margin: 0;
+  padding: 24px 0 12px;
+  background-color: var(--light-color);
+}
+
+/* center variant — a white, centered rounded card (e.g. "Smarter banking") */
+.notice.center {
+  flex-direction: column;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background-color: var(--background-color);
+  text-align: center;
+}
+
+.notice.center .notice-image {
+  order: -1;
+  flex: none;
+}
+
+.notice.center .notice-image img {
+  width: 48px;
+  border-radius: 0;
+}
+
+.notice.center .notice-content {
+  flex: none;
+  max-width: 640px;
+}
+
+@media (width >= 900px) {
+  .notice.pill,
+  .notice.center {
+    flex-direction: row;
+  }
+
+  .notice.pill {
+    padding: 8px 20px;
+  }
+
+  .notice.center {
+    flex-direction: column;
+    padding: 48px 32px;
+  }
+}

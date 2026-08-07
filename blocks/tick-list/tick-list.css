@@ -1,0 +1,41 @@
+.tick-list ul.tick-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px 32px;
+}
+
+.tick-list ul.tick-list-items li {
+  position: relative;
+  margin: 0;
+  padding-left: 34px;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+.tick-list ul.tick-list-items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 22px;
+  height: 22px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="%2300a03e"/><path d="M7 12.5l3.2 3.2L17 8.5" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+@media (width >= 600px) {
+  .tick-list ul.tick-list-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .tick-list ul.tick-list-items {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

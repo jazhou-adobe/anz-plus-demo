@@ -1,0 +1,32 @@
+.pill-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pill-nav li {
+  margin: 0;
+}
+
+.pill-nav a.pill-nav-link {
+  display: inline-block;
+  border: 1px solid #ccd6e4;
+  border-radius: 2.4em;
+  padding: 8px 18px;
+  color: var(--text-color);
+  font-size: var(--body-font-size-s);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pill-nav a.pill-nav-link:hover,
+.pill-nav a.pill-nav-link:focus-visible {
+  border-color: var(--link-color);
+  background-color: var(--light-color);
+  color: var(--link-color);
+  text-decoration: none;
+}

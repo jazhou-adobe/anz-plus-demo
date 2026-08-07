@@ -20,24 +20,25 @@
   --link-hover-color: #0052ab;
   --brand-navy: #1d164c;
   --brand-accent: #006bde;
+  --brand-blue: #0572e6;
 
   /* fonts (Aeonik is a Typekit/self-hosted brand font on anz.com.au; falls back to
      system sans on localhost since font-serving is domain-locked) */
   --body-font-family: aeonik, aeonik-fallback, 'Helvetica Neue', helvetica, arial, sans-serif;
   --heading-font-family: aeonik, aeonik-fallback, 'Helvetica Neue', helvetica, arial, sans-serif;
 
-  /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
+  /* body sizes (measured from live anz.com.au/plus @390 — mobile-first base) */
+  --body-font-size-m: 16px;
+  --body-font-size-s: 14px;
+  --body-font-size-xs: 12px;
 
-  /* heading sizes (source h1 hero: 64px desktop / accounts h1: 92px desktop) */
-  --heading-font-size-xxl: 64px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
+  /* heading sizes (measured from live anz.com.au/plus @390) */
+  --heading-font-size-xxl: 32px;
+  --heading-font-size-xl: 24px;
+  --heading-font-size-l: 20px;
+  --heading-font-size-m: 18px;
+  --heading-font-size-s: 16px;
+  --heading-font-size-xs: 14px;
 
   /* nav height (source header measured at 72px) */
   --nav-height: 72px;
@@ -52,18 +53,18 @@
 
 @media (width >= 900px) {
   :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
-    --body-font-size-s: 16px;
-    --body-font-size-xs: 14px;
+    /* body sizes (measured from live anz.com.au/plus @1440) */
+    --body-font-size-m: 16px;
+    --body-font-size-s: 14px;
+    --body-font-size-xs: 12px;
 
-    /* heading sizes */
-    --heading-font-size-xxl: 56px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
-    --heading-font-size-s: 20px;
-    --heading-font-size-xs: 18px;
+    /* heading sizes (measured from live anz.com.au/plus @1440) */
+    --heading-font-size-xxl: 64px;
+    --heading-font-size-xl: 32px;
+    --heading-font-size-l: 24px;
+    --heading-font-size-m: 20px;
+    --heading-font-size-s: 18px;
+    --heading-font-size-xs: 16px;
   }
 }
 
@@ -74,7 +75,7 @@ body {
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 body.appear {
@@ -104,8 +105,9 @@ h6 {
   margin-top: 0.8em;
   margin-bottom: 0.25em;
   font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   scroll-margin: 40px;
 }
 
@@ -176,9 +178,10 @@ button.button {
   max-width: 100%;
   margin: 0;
   border: 2px solid transparent;
-  border-radius: 2.4em;
-  padding: 0.5em 1.2em;
-  font: inherit;
+  border-radius: 999px;
+  padding: 14px 32px;
+  font-family: inherit;
+  font-size: var(--body-font-size-m);
   font-weight: 500;
   line-height: 1.25;
   text-decoration: none;
@@ -308,6 +311,17 @@ main > .section > div {
 
 main > .section:first-of-type {
   margin-top: 0;
+}
+
+/* full-bleed hero: no section margins or wrapper max-width so the banner
+   spans the viewport edge-to-edge (matching the source) */
+main > .section.hero-container {
+  margin: 0;
+}
+
+main > .section.hero-container > div {
+  max-width: none;
+  padding: 0;
 }
 
 @media (width >= 900px) {

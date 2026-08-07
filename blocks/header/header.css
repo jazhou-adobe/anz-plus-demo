@@ -241,32 +241,52 @@ header nav .nav-sections ul > li > ul > li {
   header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
     display: block;
     position: absolute;
-    left: -24px;
-    width: 200px;
-    top: 150%;
-    padding: 16px;
-    background-color: var(--light-color);
+    left: -16px;
+    width: 320px;
+    top: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background-color: #f4f3f4;
+    box-shadow: 0 8px 24px rgb(29 22 76 / 12%);
     white-space: initial;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 16px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--light-color);
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
+    padding: 0;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
-    padding: 8px 0;
+  /* each submenu item: a bold title on its own line + a grey description line */
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a {
+    display: block;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #6f6f6f;
+    font-size: var(--body-font-size-xs);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a:hover {
+    background-color: rgb(0 107 222 / 8%);
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a strong {
+    display: block;
+    color: var(--brand-navy);
+    font-size: var(--body-font-size-s);
+    font-weight: 600;
   }
 }
 
 /* tools */
 header nav .nav-tools {
   grid-area: tools;
+}
+
+/* header CTA is smaller than content CTAs (measured 14px / 12px 24px on the source) */
+header nav .nav-tools .button {
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 24px;
 }
