@@ -215,13 +215,21 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
     in production). Author tabular data as `<ul><li>` label/value pairs instead of `<table>`. (T20.)
 12. **A custom block needs the full block → row → *cell* div nesting**, not just block → row, or DA
     won't recognize it as a block and drops its class/wrapper on upload, even though it renders
-    correctly locally. (T20.)
+    correctly locally. Bit `hls-link-list` once (T20) and the shared `notice` block on 5 pages —
+    index, accounts, everyday-transaction, transact, joint-bank-accounts (T21) — proving this isn't
+    a one-off, it's a per-instance authoring risk that needs checking on every block usage.
 13. **`<dl>`/`<dt>`/`<dd>` doesn't survive DA's round-trip** — it's flattened to an unstyled
     `<ul><li><p><p></li></ul>` with all classes stripped. Avoid `<dl>` in authored block content;
     use plain paragraphs/lists styled structurally. (T20.)
 14. **Browser `img.complete`/`naturalWidth` checks false-positive on `loading="lazy"` images** under
     headless/programmatic scrolling — verify broken images via direct HTTP status on every `<img>`
     src instead of DOM load-state. (T20.)
+15. **`localhost:3000` (bare root) proxies the *remote* DA preview; only explicit `/drafts/<slug>`
+    paths serve the local draft file** — this is why a page can look correct at `/drafts/<slug>`
+    but broken at `/<slug>` (or on `aem.page`): the drafts server never runs content through DA's
+    pipeline, so it can't reproduce DA-side corruption. Treat `/<slug>` on localhost (or the real
+    `aem.page` preview) as the DA-fidelity check, and `/drafts/<slug>` as the code-fidelity check —
+    they test different things and both must be green. (T21.)
 
 ### T13 — Header mega-menu dropdown + batch deploy to preview ✅
 - **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
@@ -396,6 +404,50 @@ remaining migrated page against its live source, carrying the T19 class-strippin
   with the existing header/footer/feature-panel convention).
 - Commits: `b8c29ca`, `9bbb617`, `b1373d8`, `ac93f58`, `360cd99`, `5e4320a`, `8a832c0`.
 
+### T21 — User-prompted spot-check found the `notice` block silently broken on 5 pages ✅
+User asked to diff `localhost:3000` (root, proxies the **remote DA preview**) against
+`localhost:3000/drafts/index` (local draft, bypasses DA entirely) — this surfaced a bug that all
+prior screenshot-based verification had missed, because the page still looked plausible at a
+glance (image gone, but heading/copy still flowed in the right place as unstyled text).
+- **Root cause (a new instance of the T19/T20 class of bug):** every `notice` block usage authored
+  with a row's content **directly inside the row `<div>`** (no separate cell `<div>`) — e.g.
+  `<div class="notice pill"><div><picture>…</picture></div>…</div>` instead of
+  `<div class="notice pill"><div><div><picture>…</picture></div></div>…</div>` — loses its block
+  class entirely on DA's markdown round-trip, even when every other aspect of the authored HTML is
+  otherwise correct. Confirmed structurally: every WORKING block on the site (`hero`, `iconnav`,
+  `panel`, `cards`, `feature-panel`, …) has row→**cell**→content (2 levels of div under the block
+  class); the broken `notice` instances had row→content directly (1 level) for at least one row,
+  and DA drops the block's identity if *any* row is one level too shallow.
+- **Confirmed via a controlled test**, not just theory: added the missing cell `<div>` to
+  `index.html`'s `notice pill`/`notice center`, re-uploaded, and the class + image round-tripped
+  correctly — then reverted and reconfirmed the break, isolating this as the deterministic cause
+  (re-uploading the *unfixed* file twice reproduced the identical failure both times — this is
+  a structural defect in the authored markup, not a transient DA hiccup).
+- **Affected pages, all fixed the same way:**
+  - `index` — "Add-Ons" pill (lost its icon image) and "Smarter banking. Made simple." (lost its
+    white centered card treatment entirely, rendering as plain unstyled text).
+  - `accounts` — "The starter pack" band and "We're here to help" (lost the tinted/rounded panel
+    treatment; the coach photo still rendered but as a bare inline image, no card).
+  - `everyday-transaction` / `transact` — the same missing-cell-wrapper bug on their `notice`
+    fees panel, **compounded by the T20-class `<table>` bug** (a literal `<table>` for the 3 fee
+    rows, which DA's block-table convention corrupts) that hadn't been caught in T20 because these
+    two pages weren't rescanned for it. Converted to the same `<ul>` label/value list pattern used
+    for `interest-fees`.
+  - `joint-bank-accounts` — "Things you should know" notice lost its panel styling.
+- **Not affected (checked directly on DA, not assumed):** `feature-panel` (11/11 instances),
+  `feature-cards` (5/5 on benefits), `rate-card`, `tick-list`, `faq`, `pill-nav`,
+  `acct-rate-cards`, `hls-band`, `util-link-cards`, `cards` — all confirmed with proper row→cell
+  nesting and 1:1 class survival between `deploy/*.html` and the DA-served `.plain.html`.
+- **No code change required** — this was purely a content-authoring structure fix (extra wrapping
+  `<div>` per row) in `drafts/*.plain.html` + `deploy/*.html`; `notice.css`/`notice.js` already
+  worked via descendant selectors that don't care about the extra nesting depth.
+- Re-verified all 5 fixed pages: `notice` class present on DA post-upload, the interest-fees-style
+  fee row ("Overseas transactions") intact on both everyday-transaction and transact, 0 broken
+  images locally, all 25 site pages still HTTP 200.
+- **New standing verification practice:** when authoring any block usage, every row must nest its
+  content one level deeper than the row `<div>` itself (row → cell → content), even for
+  single-child rows — this is now the checklist item to catch before upload, not after.
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (24 blocks incl. new `table`) + measured tokens +
@@ -408,9 +460,11 @@ remaining migrated page against its live source, carrying the T19 class-strippin
 - **Nav/footer:** internal links point at local migrated slugs; footer now includes the
   acknowledgement-of-country card and the "ANZ Plus Credit Guide" link.
 - **Fidelity status:** every page has been individually compared against its live source at least
-  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Three genuine DA round-trip
-  data-loss/degradation bugs were found and fixed (T20) that would otherwise have silently shipped
-  broken content on every future content edit to those pages.
+  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Four genuine DA round-trip
+  data-loss/degradation bugs were found and fixed (T20/T21) that would otherwise have silently
+  shipped broken content on every future content edit to those pages — the `notice` block in
+  particular required a second pass (T21) because the T20 sweep didn't happen to touch every
+  `notice` usage.
 - **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
@@ -423,7 +477,7 @@ remaining migrated page against its live source, carrying the T19 class-strippin
 
 ---
 
-*Last updated: 2026-08-07 (through T20 full-site fidelity + DA-sync pass; all 25 pages individually
-verified against live source and confirmed 0 broken images on DA preview; live publish pending user
-review).*
+*Last updated: 2026-08-07 (through T21: user-prompted `localhost:3000` vs `/drafts/index` diff
+uncovered a silent `notice`-block failure on 5 pages, fixed and re-verified against the DA-served
+output directly, not just screenshots; live publish pending user review).*
 
