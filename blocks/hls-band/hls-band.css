@@ -1,0 +1,9 @@
+/* hls-band — paints its whole section a full-bleed light grey */
+
+main .section.hls-band-container {
+  background: #f4f4f4;
+}
+
+.hls-band {
+  display: none;
+}

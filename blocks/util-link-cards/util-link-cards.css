@@ -1,0 +1,50 @@
+/* util-link-cards — bordered, rounded link rows with a trailing chevron */
+
+.util-link-cards .util-link-cards-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.util-link-cards .util-link-cards-item {
+  margin: 0;
+}
+
+.util-link-cards .util-link-cards-item a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border: 1px solid #d9d7e4;
+  border-radius: 12px;
+  color: var(--text-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.util-link-cards .util-link-cards-item a:hover,
+.util-link-cards .util-link-cards-item a:focus-visible {
+  border-color: var(--brand-accent);
+  background-color: var(--light-color);
+}
+
+/* CSS-drawn chevron pointing right */
+.util-link-cards .util-link-cards-item a::after {
+  content: '';
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--brand-accent);
+  border-right: 2px solid var(--brand-accent);
+  transform: rotate(45deg);
+}
+
+@media (width >= 900px) {
+  .util-link-cards .util-link-cards-list {
+    max-width: 640px;
+  }
+}

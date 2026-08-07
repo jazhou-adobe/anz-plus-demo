@@ -1,0 +1,43 @@
+/* hls-eligibility — full-bleed grey "Things you should know" panel */
+
+main .section.hls-eligibility-container {
+  background: #f4f4f4;
+}
+
+.hls-eligibility .hls-eligibility-intro {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 8px;
+}
+
+.hls-eligibility .hls-eligibility-intro h2 {
+  margin-top: 0;
+}
+
+.hls-eligibility .hls-eligibility-row {
+  padding: 32px 0;
+  border-top: 1px solid #dcdcdc;
+}
+
+.hls-eligibility .hls-eligibility-head h2,
+.hls-eligibility .hls-eligibility-head h3 {
+  margin: 0;
+  font-size: var(--heading-font-size-m);
+}
+
+.hls-eligibility .hls-eligibility-list ul {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.hls-eligibility .hls-eligibility-list li {
+  margin-bottom: 8px;
+}
+
+@media (width >= 900px) {
+  .hls-eligibility .hls-eligibility-row {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 48px;
+  }
+}

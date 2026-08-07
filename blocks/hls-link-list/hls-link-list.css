@@ -1,0 +1,102 @@
+/* hls-link-list — bordered link rows with chevrons (support hub) */
+
+.hls-link-list h3,
+.hls-link-list h4 {
+  margin: 24px 0 4px;
+}
+
+.hls-link-list > div > p {
+  margin: 4px 0 24px;
+}
+
+.hls-link-list > div > p a {
+  color: var(--brand-accent);
+  font-weight: 600;
+}
+
+.hls-link-list .hls-link-list-items {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.hls-link-list .hls-link-list-items li {
+  margin: 0;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.hls-link-list .hls-link-list-items li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 4px;
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hls-link-list .hls-link-list-items li a::after {
+  content: '';
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--brand-accent);
+  border-bottom: 2px solid var(--brand-accent);
+  transform: rotate(-45deg);
+}
+
+.hls-link-list .hls-link-list-items li a:hover,
+.hls-link-list .hls-link-list-items li a:focus-visible {
+  color: var(--brand-accent);
+}
+
+/* grid variant: each row is a category (icon + heading + link rows) */
+.hls-link-list.grid img {
+  width: 44px;
+  height: auto;
+}
+
+.hls-link-list.grid > div h3 {
+  margin: 8px 0 12px;
+  scroll-margin-top: 90px;
+}
+
+.hls-link-list.grid > div > div > p:first-child {
+  margin: 0;
+  line-height: 0;
+}
+
+@media (width >= 900px) {
+  .hls-link-list.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 56px;
+  }
+
+  .hls-link-list.grid > div {
+    margin-bottom: 24px;
+  }
+
+  .hls-link-list.cols-2 .hls-link-list-items {
+    column-count: 2;
+    column-gap: 48px;
+  }
+
+  .hls-link-list.cols-2 .hls-link-list-items li {
+    break-inside: avoid;
+  }
+
+  .hls-link-list.groups > div {
+    column-count: 2;
+    column-gap: 48px;
+  }
+
+  .hls-link-list.groups > div > h4 {
+    break-after: avoid;
+  }
+
+  .hls-link-list.groups > div > .hls-link-list-items {
+    break-inside: avoid;
+  }
+}

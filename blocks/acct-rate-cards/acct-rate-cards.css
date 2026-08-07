@@ -1,0 +1,147 @@
+/* full-bleed navy section */
+main .section:has(.acct-rate-cards) {
+  margin: 0;
+  padding: 48px 0;
+  background-color: var(--brand-navy);
+}
+
+.acct-rate-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.acct-rate-cards .acct-rate-cards-card {
+  background-color: #e7f0fc;
+  border-radius: 20px;
+  padding: 28px 24px;
+  color: var(--brand-navy);
+}
+
+.acct-rate-cards .acct-rate-cards-card > div > h2 {
+  margin: 0 0 4px;
+  font-size: var(--heading-font-size-m);
+}
+
+.acct-rate-cards .acct-rate-cards-card > div > p {
+  margin: 8px 0 0;
+}
+
+.acct-rate-cards .acct-rate-cards-figure {
+  margin: 16px 0 0;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.acct-rate-cards .acct-rate-cards-figlabel {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.acct-rate-cards .acct-rate-cards-card .button-wrapper {
+  margin-top: 20px;
+}
+
+.acct-rate-cards .acct-rate-cards-card .button.primary {
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+  color: var(--background-color);
+  width: 100%;
+}
+
+/* section title on the navy background */
+.acct-rate-cards .acct-rate-cards-title {
+  text-align: center;
+}
+
+.acct-rate-cards .acct-rate-cards-title > div > h1,
+.acct-rate-cards .acct-rate-cards-title > div > h2,
+.acct-rate-cards .acct-rate-cards-title > div > h3 {
+  margin: 0;
+  color: #ff6a6a;
+}
+
+.acct-rate-cards .acct-rate-cards-title > div > p {
+  margin: 8px auto 0;
+  max-width: 720px;
+  color: var(--background-color);
+}
+
+/* trailing note on the navy background */
+.acct-rate-cards .acct-rate-cards-note {
+  text-align: center;
+  color: var(--background-color);
+}
+
+.acct-rate-cards .acct-rate-cards-note > div > p {
+  margin: 4px 0 0;
+  color: var(--background-color);
+  font-size: var(--body-font-size-s);
+}
+
+.acct-rate-cards .acct-rate-cards-note > div > p:first-child {
+  color: #ff6a6a;
+  font-weight: 600;
+}
+
+.acct-rate-cards .acct-rate-cards-note:has(ul) {
+  text-align: left;
+}
+
+.acct-rate-cards .acct-rate-cards-note ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--background-color);
+  font-size: var(--body-font-size-s);
+}
+
+.acct-rate-cards .acct-rate-cards-note a {
+  color: var(--background-color);
+  text-decoration: underline;
+}
+
+@media (width >= 900px) {
+  main .section:has(.acct-rate-cards) {
+    padding: 64px 0;
+  }
+
+  .acct-rate-cards {
+    display: grid;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .acct-rate-cards.acct-rate-cards-2up {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .acct-rate-cards.acct-rate-cards-3up {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .acct-rate-cards .acct-rate-cards-card {
+    padding: 36px 32px;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .acct-rate-cards .acct-rate-cards-figure {
+    font-size: 52px;
+  }
+
+  .acct-rate-cards .acct-rate-cards-card .button.primary {
+    width: auto;
+  }
+
+  /* title and note span all columns */
+  .acct-rate-cards .acct-rate-cards-title {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+  }
+
+  .acct-rate-cards .acct-rate-cards-note {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+}

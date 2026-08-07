@@ -1,0 +1,108 @@
+/* util-download-hero — navy full-bleed "Get started in the ANZ Plus app" banner */
+
+.util-download-hero-container .util-download-hero-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.util-download-hero {
+  background-color: var(--brand-navy);
+  color: var(--background-color);
+  padding: 48px 24px;
+}
+
+.util-download-hero > div {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.util-download-hero-text {
+  text-align: center;
+}
+
+.util-download-hero-text h1,
+.util-download-hero-text h2,
+.util-download-hero-text h3 {
+  margin-top: 0;
+  color: var(--background-color);
+  font-size: var(--heading-font-size-xxl);
+}
+
+.util-download-hero-text p {
+  color: var(--background-color);
+  font-size: var(--body-font-size-m);
+}
+
+.util-download-hero-qr {
+  margin: 24px 0;
+}
+
+.util-download-hero-qr picture {
+  display: inline-block;
+  padding: 16px;
+  background-color: var(--background-color);
+  border-radius: 16px;
+}
+
+.util-download-hero-qr img {
+  display: block;
+  width: 180px;
+  height: 180px;
+}
+
+.util-download-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.util-download-hero-badges a {
+  display: inline-block;
+}
+
+.util-download-hero-badges img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+.util-download-hero-media {
+  display: flex;
+  justify-content: center;
+}
+
+.util-download-hero-media img {
+  width: auto;
+  max-width: 100%;
+  max-height: 480px;
+}
+
+@media (width >= 900px) {
+  .util-download-hero {
+    padding: 64px 32px;
+  }
+
+  .util-download-hero > div {
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .util-download-hero-text {
+    flex: 1 1 50%;
+    text-align: left;
+  }
+
+  .util-download-hero-badges {
+    justify-content: flex-start;
+  }
+
+  .util-download-hero-media {
+    flex: 1 1 50%;
+  }
+}

@@ -1,0 +1,203 @@
+/* hls-calculator — static refinance calculator (default state) */
+
+/* the whole intro section (hero heading + calculator + disclaimer) sits on grey */
+main .section:has(> .hls-calculator-wrapper) {
+  background: #f2f2f2;
+}
+
+
+.hls-calculator > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ---------- inputs column ---------- */
+.hls-calculator .hls-calculator-inputs dl {
+  margin: 0;
+}
+
+.hls-calculator .hls-calculator-inputs dt {
+  font-size: 0.85rem;
+  color: #4a4a4a;
+  margin: 18px 0 6px;
+}
+
+.hls-calculator .hls-calculator-inputs dt:first-child {
+  margin-top: 0;
+}
+
+.hls-calculator .hls-calculator-inputs dd {
+  margin: 0;
+  border: 1px solid #b4b4b4;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  font-size: 1rem;
+  color: #1e1e1e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hls-calculator .hls-calculator-inputs .hls-calc-adorn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: -6px 0 -6px -6px;
+  border-radius: 6px;
+  background: #f2f2f2;
+  color: #4a4a4a;
+  font-weight: 700;
+}
+
+.hls-calculator .hls-calculator-inputs .hls-calc-tips {
+  margin: 18px 0 0;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f2f2f2;
+  color: #4a4a4a;
+  font-size: 0.9rem;
+}
+
+/* ---------- results card ---------- */
+.hls-calculator .hls-calculator-results {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 18px rgb(0 0 0 / 8%);
+}
+
+.hls-calculator .hls-calculator-results .eyebrow {
+  display: inline-block;
+  background: #e2f6fd;
+  color: #005b7f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin: 0 0 12px;
+}
+
+.hls-calculator .hls-calculator-results h3 {
+  margin: 0 0 16px;
+  font-size: 1.4rem;
+}
+
+.hls-calculator .hls-calc-tabs {
+  list-style: none;
+  display: flex;
+  gap: 24px;
+  margin: 0 0 16px;
+  padding: 0 0 4px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.hls-calculator .hls-calc-tabs li {
+  padding-bottom: 8px;
+  color: #6a6a6a;
+  font-size: 0.95rem;
+  cursor: default;
+}
+
+.hls-calculator .hls-calc-tabs li.is-active {
+  color: #004165;
+  font-weight: 700;
+  border-bottom: 2px solid #004165;
+}
+
+.hls-calculator .hls-calc-cap {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6a6a6a;
+}
+
+.hls-calculator .hls-calc-big {
+  margin: 2px 0 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e1e1e;
+}
+
+.hls-calculator .hls-calc-mid {
+  margin: 2px 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e1e1e;
+}
+
+.hls-calculator .hls-calc-mid span,
+.hls-calculator .hls-calc-big span {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #6a6a6a;
+  margin-left: 2px;
+}
+
+.hls-calculator .hls-calc-primary,
+.hls-calculator .hls-calc-savings > div,
+.hls-calculator .hls-calc-rates > div {
+  background: #f7f7f7;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.hls-calculator .hls-calc-primary {
+  margin: 16px 0 12px;
+}
+
+.hls-calculator .hls-calc-savings,
+.hls-calculator .hls-calc-rates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hls-calculator .hls-calc-note {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: #6a6a6a;
+}
+
+.hls-calculator .hls-calc-rate-head {
+  margin: 20px 0 8px;
+  font-weight: 700;
+  color: #1e1e1e;
+}
+
+.hls-calculator .hls-calc-expand {
+  margin: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 14px 0;
+  color: #004165;
+  font-weight: 600;
+}
+
+.hls-calculator .hls-calc-expand::after {
+  content: '⌄';
+  float: right;
+  color: #6a6a6a;
+}
+
+.hls-calculator .hls-calc-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+  margin: 16px 0 0;
+}
+
+.hls-calculator .hls-calc-cta a {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .hls-calculator > div {
+    grid-template-columns: 1fr 1.15fr;
+    gap: 48px;
+  }
+}
