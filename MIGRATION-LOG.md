@@ -268,6 +268,21 @@ columns (with a NEW badge). Rebuilt faithfully:
 - One stylelint `no-descending-specificity` rule waived file-scoped (component-grouped ordering,
   not a defect).
 
+### T16 — Mega-menu behavior/layout + header-height fixes (user-flagged) ✅
+Follow-ups on the mega-menu, all verified on the **deployed** site:
+- **Click behavior:** the top label now toggles the mega-menu instead of navigating (desktop);
+  submenu links still navigate. `header.js` click handler intercepts only the label link.
+- **DA `<p>`-wrap:** the delivered nav has each label link wrapped in a `<p>` by the DA editor,
+  which broke the chevron/click selectors and inflated the header. `header.js` now unwraps that
+  `<p>` at decorate time, and `buildMegaMenu` matches item links via `li.querySelector('a')` so it
+  is robust to the wrap. (Root-caused from the delivered `nav.plain.html`.)
+- **Featured card layout:** icon | title-over-description, left-aligned, no arrow — matched to the
+  source. Fixed a specificity clash where the link-column rule (`display:flex; space-between`) was
+  overriding the featured grid (excluded featured via `:not(.mega-featured)`).
+- **Header height:** `--nav-height` set to **89px** per the source.
+- Committed to `main` (`f2b449a`); code-sync verified live (header 89px, label-click no-nav,
+  3 columns, 4 cards, 0 broken icons).
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (23 blocks) + measured tokens + all fixes.
