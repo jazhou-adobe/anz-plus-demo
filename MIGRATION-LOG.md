@@ -283,6 +283,17 @@ Follow-ups on the mega-menu, all verified on the **deployed** site:
 - Committed to `main` (`f2b449a`); code-sync verified live (header 89px, label-click no-nav,
   3 columns, 4 cards, 0 broken icons).
 
+### T17 — Homepage section fidelity to reference images (user-supplied) ✅
+Pixel-level matches against user reference screenshots, all deployed + verified on `aem.page`:
+- **Mega-menu:** fixed **629px** height, **423px** grey left panel (featured column overhangs to
+  600px so grey bleeds left and link columns sit right with empty space); featured cards
+  icon | title-over-description, left-aligned; blue/underline hover on card titles.
+- **Hero:** shortened to ~**480px** (`box-sizing: border-box`) so the desktop 3:1 image shows the
+  full scene uncropped; stronger left scrim; H1 two lines.
+- **Start-banking tint panel:** lighter cyan-blue `#e2f6fd`.
+- **Smarter banking:** confirmed already matching (white card, blue lotus, blue pill).
+- Committed `b3d838f`; verified live (hero 480, mega 629/423).
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (23 blocks) + measured tokens + all fixes.
