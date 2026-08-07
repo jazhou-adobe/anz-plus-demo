@@ -496,8 +496,9 @@ viewport-dependent bugs invisible at normal desktop widths:
 
 ## 8. Current status
 
-- **On `main` (code):** the full block library (24 blocks incl. new `table`) + measured tokens +
-  all fidelity fixes + the DA class-stripping structural-selector pattern. Latest commit `8a832c0`.
+- **On `main` (code):** the full block library (24 blocks incl. `table`) + measured tokens +
+  all fidelity fixes + the DA class-stripping structural-selector pattern + the T22 hero/full-bleed
+  viewport fixes. Latest commit `411428c`.
 - **On DA preview (content):** the **entire 25-page site** — home, accounts, benefits, home-loans,
   support + all 21 remaining sub-pages + nav/footer — all previewing at `aem.page`; every slug
   HTTP 200, verified 0 broken images (checked via direct HTTP status on every image URL, not
