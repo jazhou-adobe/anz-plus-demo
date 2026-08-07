@@ -1,6 +1,9 @@
 /* the "Explore …" heading that introduces the pill row is centered in the
-   source (the pills are already centered) */
-main .section:has(.pill-nav) .default-content-wrapper {
+   source — but ONLY when the pill-nav sits alone in its own section (e.g.
+   benefits/home-loans). Where a page combines a hero (heading + copy +
+   image) with an in-page pill-nav (e.g. Support), the source keeps that
+   hero left-aligned, so exclude sections that also contain an image. */
+main .section:has(.pill-nav):not(:has(picture)) .default-content-wrapper {
   text-align: center;
 }
 
