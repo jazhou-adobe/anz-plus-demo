@@ -206,6 +206,22 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
    homepage that in fact diverged materially; independent screenshot verification caught it. (T7.)
 9. **Concurrency discipline** — parallel agents must work on disjoint file sets; shared files
    get a single writer, others read-only + log deferred changes. (T8 ‖ T9.)
+10. **DA's markdown round-trip strips non-block classes** — a class on a plain `<p>`/`<div>` that
+    isn't a recognized block's top-level class is silently dropped on DA (but renders fine on local
+    `--html-folder` preview, masking the bug until upload). Style such elements structurally
+    (`:first-child`, `:has()`) instead. (T19.)
+11. **A literal `<table>` on a page is parsed via the EDS block-table convention** — DA consumes its
+    first row as a block name, corrupting or silently dropping data (caught deleting a real fee row
+    in production). Author tabular data as `<ul><li>` label/value pairs instead of `<table>`. (T20.)
+12. **A custom block needs the full block → row → *cell* div nesting**, not just block → row, or DA
+    won't recognize it as a block and drops its class/wrapper on upload, even though it renders
+    correctly locally. (T20.)
+13. **`<dl>`/`<dt>`/`<dd>` doesn't survive DA's round-trip** — it's flattened to an unstyled
+    `<ul><li><p><p></li></ul>` with all classes stripped. Avoid `<dl>` in authored block content;
+    use plain paragraphs/lists styled structurally. (T20.)
+14. **Browser `img.complete`/`naturalWidth` checks false-positive on `loading="lazy"` images** under
+    headless/programmatic scrolling — verify broken images via direct HTTP status on every `<img>`
+    src instead of DOM load-state. (T20.)
 
 ### T13 — Header mega-menu dropdown + batch deploy to preview ✅
 - **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
@@ -294,25 +310,120 @@ Pixel-level matches against user reference screenshots, all deployed + verified 
 - **Smarter banking:** confirmed already matching (white card, blue lotus, blue pill).
 - Committed `b3d838f`; verified live (hero 480, mega 629/423).
 
+### T18 — Continued page-by-page fidelity pass: Homepage/Accounts/Benefits/Home Loans/Support ✅
+Systematic section-by-section comparison of each primary nav page's **local draft** against the
+**live source**, fixing real gaps (not cosmetic nitpicks). All verified on `localhost:3000/drafts/*`
+then synced to DA preview.
+- **Footer** (shared, every page): source is centered (logo/legal/badges) with an **acknowledgement-
+  of-country card** (indigenous artwork + ANZ Plus Pride logo, reconciliation + "Learn more" links)
+  that was missing entirely; also missing the **"ANZ Plus Credit Guide"** link in Important
+  Information. Rebuilt the acknowledgement as its own footer section, centered the chrome, added
+  the missing link. Art asset (633KB source SVG, over DA's 40KB cap) rasterized to a 480px PNG and
+  uploaded to DA `/media`.
+- **Accounts**: source hero is a **centered blue heading + phone screenshot below** (not a full-bleed
+  photo banner) — added a `hero.product` variant. Source account cards are a **2-up grey-band
+  grid** with blue uppercase eyebrows and a bottom-anchored illustration, not a 4-up icon grid —
+  reworked `accounts-cards`. "Starter pack" is a plain centered grey band, not a lavender card —
+  added `notice.band`.
+- **Benefits**: source feature-panel/feature-cards headings are **brand-blue**, not navy — this was
+  the dominant "feel" gap, fixed globally (cascades to every page using these blocks). "Smash your
+  goals" was solid-blue locally vs light-blue-tint in source — switched to the `tint` variant.
+- **Home Loans**: pill-nav intro heading is centered in source (pills were already centered) — fixed.
+  Rate-toggle (Live-in/Investment) and the refinance calculator's live-fetch results remain
+  accepted static-default simplifications (interactive tooling out of scope per T9/T14).
+- **Support**: verified content-complete and structurally matching (popular topics / support
+  categories / support articles / need-more-help / message-a-coach). Support-categories icon-cards
+  (source shows large icon illustrations per category) accepted as a simplified link-list — noted,
+  not fixed, given scope.
+
+### T19 — DA sync bug discovery: markdown round-trip strips non-block classes ⚠️→✅
+**Root-caused a class of latent bugs**, found while syncing T18's fixes to DA: the DA content
+pipeline's HTML→markdown→HTML round-trip **only preserves the top-level class of a div that is a
+recognized block** (e.g. `class="feature-panel blue"` survives because `feature-panel` is a block
+name). Any class added to a plain `<p>`/inner `<div>` for one-off styling — e.g. `class="eyebrow"`
+on a paragraph, or a bespoke `class="footer-acknowledgement"` wrapper — is **silently stripped** on
+DA even though it renders correctly on the local `--html-folder drafts` server (raw HTML, no
+stripping). This is invisible in local dev and only surfaces once content is uploaded to DA.
+- **Fix pattern established:** target such elements **structurally** (`:first-child`, `:nth-child`,
+  `:has()`, element type) based on DOM position, which is identical between local drafts and DA
+  output, instead of adding new arbitrary classes. Applied to the footer acknowledgement card and
+  the accounts-cards eyebrow.
+- **Also caught a real regression**: the pill-nav centering fix (T18) over-applied to pages that
+  combine a hero (heading+copy+image) with an in-page pill-nav in the *same* section (Support),
+  forcing the whole hero to center-collapse. Scoped the rule to exclude sections containing an image.
+- Verified the fix by checking the **DA-served** `.plain.html` (not just local drafts) for the
+  expected structure/classes post-upload — this is now the standard verification step for anything
+  touching non-block classes.
+
+### T20 — Full sub-page fidelity + sync sweep: 21 remaining pages (4 parallel agents) ✅
+Dispatched 4 parallel agents across disjoint page sets to fidelity-check and DA-sync every
+remaining migrated page against its live source, carrying the T19 class-stripping lesson forward.
+- **Pages covered (21):** my-accounts, everyday-transaction, transact, save, flex-saver,
+  growth-saver, joint-bank-accounts, new-to-australia, explore-loans, refinance-calculator,
+  eligibility, interest-fees, support-home-loans, add-ons, coaches, switch-to-plus, download,
+  security, feedback-complaints, privacy, terms-conditions.
+- **Most pages (13) already matched source** from the T14 bulk migration — confirmed via
+  source-vs-draft heading/structure diff, no changes needed.
+- **Real fixes found and shipped:**
+  - `everyday-transaction`/`transact`: promo pair was stacking full-width instead of source's 2-col
+    grid — used the existing `panel.duo` modifier (no new code).
+  - `panel` block: the sub-banner eyebrow label used the T19-class-stripping-prone `.eyebrow` class
+    — fixed structurally (`p:first-child`), repairing the same latent bug on 6 pages at once
+    (index/coaches/accounts/everyday-transaction/security/transact) without touching their markup.
+  - `save`: a literal `<table>` for the account comparison — DA's pipeline interprets a page-level
+    `<table>` using the **EDS block-table convention** (first row consumed as the block name),
+    corrupting it. Built a minimal `table` block instead.
+  - **`refinance-calculator`** (hls-calculator): authored with `<dl>`/`<dt>`/`<dd>` and extra
+    wrapper `<div>`s — DA's round-trip converted the `<dl>` to a flat `<ul><li><p><p></li></ul>`
+    and **stripped every class and wrapper div**, degrading the live calculator to unstyled
+    paragraphs. Rewrote the block's markup/CSS to use only structurally-targetable elements.
+  - **`eligibility`** (hls-link-list): authored with only 1 wrapper div instead of the required
+    2-level block/row/**cell** nesting every other working block uses — DA couldn't recognize it as
+    a block and dropped the class + wrapper, degrading it to a bare bullet list. Added the missing
+    cell div.
+  - **`interest-fees`** — most serious: a literal `<table>` inside a `notice` callout hit the same
+    block-table convention as `save`, which **silently deleted the first fee row** ("Overseas
+    transactions: 3%…") on every DA upload. Replaced with a `<ul>` label/value list and added
+    scoped `notice` CSS (`li:has(p + p)`) for the fee-row pattern.
+- **Verification:** every fix independently re-verified post-sync — confirmed the previously-deleted
+  interest-fees row is present on the live DA preview, the eligibility link-list and the refinance
+  calculator both render with full classes/structure intact. Broken-image checks across all 25
+  content pages via direct HTTP status on every `<img>` src (not browser `.complete`, which produces
+  false positives from `loading="lazy"` + headless/programmatic scroll) — **0 real broken images**
+  site-wide. All 25 slugs HTTP 200 on the DA preview host.
+- Central `npm run lint` pass after merging all 4 agents' work: clean (waived
+  `no-descending-specificity` file-scoped on 3 more structurally-grouped block CSS files, consistent
+  with the existing header/footer/feature-panel convention).
+- Commits: `b8c29ca`, `9bbb617`, `b1373d8`, `ac93f58`, `360cd99`, `5e4320a`, `8a832c0`.
+
 ## 8. Current status
 
-- **On `main` (code):** the full block library (23 blocks) + measured tokens + all fixes.
-  Latest commit `8cb2b44`.
-- **On DA preview (content):** the **entire 26-page site** — home, accounts, benefits, home-loans +
-  the 22 T14 pages + nav/footer — all previewing at `aem.page`; every slug HTTP 200, 0 broken images,
-  0 page errors. Derived images + 4 rasterized QR PNGs live under DA `/media`.
-- **Nav/footer:** internal links point at local migrated slugs.
+- **On `main` (code):** the full block library (24 blocks incl. new `table`) + measured tokens +
+  all fidelity fixes + the DA class-stripping structural-selector pattern. Latest commit `8a832c0`.
+- **On DA preview (content):** the **entire 25-page site** — home, accounts, benefits, home-loans,
+  support + all 21 remaining sub-pages + nav/footer — all previewing at `aem.page`; every slug
+  HTTP 200, verified 0 broken images (checked via direct HTTP status on every image URL, not
+  browser `.complete` which false-positives on lazy-loaded images). Footer acknowledgement art +
+  QR PNGs live under DA `/media`.
+- **Nav/footer:** internal links point at local migrated slugs; footer now includes the
+  acknowledgement-of-country card and the "ANZ Plus Credit Guide" link.
+- **Fidelity status:** every page has been individually compared against its live source at least
+  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Three genuine DA round-trip
+  data-loss/degradation bugs were found and fixed (T20) that would otherwise have silently shipped
+  broken content on every future content edit to those pages.
 - **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
 
 - [ ] Fold `import-work/DEFERRED-shared-changes.md` token suggestions into `:root`.
-- [ ] Commit + push Benefits/Home-Loans blocks and token changes to `main`.
-- [ ] Re-upload improved homepage + new Benefits/Home-Loans content to DA preview.
-- [ ] Final 4-page verification vs live (home, accounts, benefits, home-loans).
 - [ ] User review → publish to live.
-- [ ] Migrate Support section (4th nav landing) + remaining sub-pages.
+- [ ] Optional polish (accepted-as-is, lower priority): Support's "support categories" section uses
+  a link-list where source shows large icon-illustration cards; interactive tools (refinance
+  calculator live results, rate toggle, eligibility flow) remain faithful static-default states.
 
 ---
 
-*Last updated: 2026-08-07 (through T14 full-site migration; all 26 pages on DA preview with local-slug nav/footer, live publish pending user review).*
+*Last updated: 2026-08-07 (through T20 full-site fidelity + DA-sync pass; all 25 pages individually
+verified against live source and confirmed 0 broken images on DA preview; live publish pending user
+review).*
+
