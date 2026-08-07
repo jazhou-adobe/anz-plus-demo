@@ -28,7 +28,10 @@ main .section:has(.panel) {
   justify-content: center;
 }
 
-.panel .panel-text .eyebrow {
+/* targeted structurally (first paragraph in the panel text), not by the `eyebrow`
+   class: DA's markdown round-trip strips non-block classes, but panel DOM order
+   is identical on local drafts and DA. */
+.panel .panel-text p:first-child {
   display: block;
   margin: 0 0 4px;
   border-radius: 0;
