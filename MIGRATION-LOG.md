@@ -207,14 +207,58 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
 9. **Concurrency discipline** — parallel agents must work on disjoint file sets; shared files
    get a single writer, others read-only + log deferred changes. (T8 ‖ T9.)
 
+### T13 — Header mega-menu dropdown + batch deploy to preview ✅
+- **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
+  item as a **bold title + grey description** on a light-grey rounded panel. Rebuilt `nav.plain.html`
+  submenu items as `<a><strong>Title</strong> description</a>` (survives the DA class-stripping),
+  restyled the dropdown in `header.css` (320px light-grey `#f4f3f4` panel, 12px radius, soft shadow,
+  navy titles + grey descriptions). Extracted the real descriptions from the live mega-menu.
+- **Batch deploy (code → main, content → DA preview):**
+  - Pushed all code to `main` (blocks + styles + log) — commit `1fc0f4d`.
+  - Pre-uploaded 4 locally-derived images to DA `/media` (no source URL): `usp-lotus-blue.svg`,
+    `hl-hero-house.png`, and two **rasterized QR PNGs**.
+  - **QR-cap gotcha:** the source QR **SVGs are ~156KB** — over DA's 40KB SVG cap → preview 409
+    ("error from content-bus"). Rasterized both to 600×600 PNG (`rsvg-convert`), pre-uploaded, and
+    mapped the refs to the PNGs. Preview then 200.
+  - Uploaded + previewed all 6 docs (`nav, footer, index, accounts, benefits, home-loans`).
+- **Verified on the preview host** (`aem.page`): all 4 content pages 0 broken images, 0 page errors,
+  correct titles (home 29 imgs/9 sections, accounts 10/4, benefits 32/20, home-loans 21/12).
+- **Live publish still on hold** for user review.
+
+### T14 — Full-site migration: remaining 22 pages + nav/footer relink ✅
+Migrated every remaining navigable `/plus/` page via **4 parallel agents** on disjoint page sets and
+disjoint new-block namespaces (`acct-`/`why-`/`hls-`/`util-`), then a central deploy pass.
+- **Pages (22):** add-ons, coaches, download, eligibility, everyday-transaction, explore-loans,
+  feedback-complaints, flex-saver, growth-saver, interest-fees, joint-bank-accounts, my-accounts,
+  new-to-australia, privacy, refinance-calculator, save, security, support, support-home-loans,
+  switch-to-plus, terms-conditions, transact. (`/transact` mirrors everyday-transaction — source 301.)
+- **New blocks (7):** `acct-rate-cards`, `hls-calculator`, `hls-eligibility`, `hls-link-list`,
+  `hls-band`, `util-download-hero`, `util-link-cards`. Committed to `main` (`8cb2b44`). The `why-`
+  agent needed **zero** new blocks — the library now covers most layouts.
+- **Central deploy handling:**
+  - Normalised **5 different agent image-map schemas** into one basename→URL lookup (206 entries).
+  - Rasterized 2 more over-cap QR SVGs (util-download 149KB, hls-switch 153KB) → PNG, pre-uploaded
+    to DA `/media`; why-page QRs reused the shared `join-qr`.
+  - Built + uploaded + previewed all 24 docs (nav, footer, 22 pages).
+- **Nav/footer relinked to local slugs** (user request): rewrote every migrated internal link in
+  `nav.plain.html`/`footer.plain.html` from absolute `anz.com.au/plus/...` to local slugs; only the
+  two genuinely-external links (Banking Code, Financial Claims Scheme) stay absolute.
+- **Verified on preview host:** all 26 slugs HTTP 200; broken-image + page-error sweep across the 22
+  new pages = **0 pages with issues**.
+- **Honest fidelity gaps** (per agent reports): interactive tools (refinance calculator, eligibility
+  flow, rate toggles) rendered as faithful STATIC default states; a few source carousels rendered as
+  static grids; some full-bleed colour bands approximated. Content is complete/verbatim.
+- **Live publish still on hold** for user review.
+
 ## 8. Current status
 
-- **On `main` (code):** header/footer/hero/notice/cards/columns/metadata + homepage blocks
-  (iconnav/panel/usps/appjoin) + token changes. **Benefits/Home-Loans blocks are built locally
-  but NOT yet committed/pushed.**
-- **On DA preview (content):** `nav`, `footer`, `index` (older pre-fidelity version), `accounts`.
-  **The improved homepage and the Benefits/Home-Loans pages are NOT yet re-uploaded.**
-- **On live:** nothing published (gated on user review).
+- **On `main` (code):** the full block library (23 blocks) + measured tokens + all fixes.
+  Latest commit `8cb2b44`.
+- **On DA preview (content):** the **entire 26-page site** — home, accounts, benefits, home-loans +
+  the 22 T14 pages + nav/footer — all previewing at `aem.page`; every slug HTTP 200, 0 broken images,
+  0 page errors. Derived images + 4 rasterized QR PNGs live under DA `/media`.
+- **Nav/footer:** internal links point at local migrated slugs.
+- **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
 
@@ -227,4 +271,4 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
 
 ---
 
-*Last updated: 2026-08-07 (through T12 homepage bug-fix pass; all changes local, pending re-deploy).*
+*Last updated: 2026-08-07 (through T14 full-site migration; all 26 pages on DA preview with local-slug nav/footer, live publish pending user review).*
