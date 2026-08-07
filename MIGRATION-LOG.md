@@ -240,6 +240,20 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
     ~480px from a user-supplied image; precise cross-width measurement in T22 found the real value
     is a fixed 640px. Measure the *live* source at multiple widths before calling a value final.
     (T22.)
+18. **A page's own body content can cross-link to pages beyond its "obvious" scope** — when
+    moving/renaming pages, grepping only the moved files' own old names misses pages that merely
+    *reference* them. A full site-wide link crawl (every page → every local `href` → HTTP status)
+    is the only reliable way to catch this; targeted greps caught the file list to move, but only
+    the crawl caught 2 stationary pages whose links had been fixed locally but never re-uploaded.
+    (T23.)
+19. **Files and folders sharing a base name coexist fine** in the local filesystem, DA's source
+    storage, and the aem-cli dev server's routing — a landing page `support/home-loans` and a
+    child page `support/home-loans/eligibility` are not a naming conflict (the file always carries
+    an extension; the folder never does). Verified empirically before committing to this
+    hierarchy shape, not assumed. (T23.)
+20. **Deleting a DA source doc does not retire its already-generated preview** — the old flat path
+    kept serving stale content until the Admin API's preview-delete endpoint was also called.
+    Moving/retiring a page needs both: delete the source, delete the preview. (T23.)
 
 ### T13 — Header mega-menu dropdown + batch deploy to preview ✅
 - **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
@@ -494,28 +508,90 @@ viewport-dependent bugs invisible at normal desktop widths:
   `appjoin` — color the section wrapper directly instead, which doesn't have this failure mode).
 - Commits: `946abf1`, `eae48c1`.
 
+### T23 — Information architecture restructure: flat → nested hierarchy matching source ✅
+User flagged that the migrated site was entirely flat (every page at the DA root) while source
+`anz.com.au/plus/` has a real folder hierarchy (e.g. `/plus/accounts/everyday-transaction/`,
+`/plus/support/home-loans/eligibility/eligibility-requirements/`). Verified the exact source
+hierarchy with targeted `curl` probes (not assumed) before moving anything, then moved every
+child page under its correct parent landing page, keeping existing local slugs unchanged
+(this was a **nesting-level fix**, not a slug-renaming exercise) except `support-home-loans` →
+`support/home-loans` (renamed on nesting, since the flat name existed only to avoid colliding
+with the top-level `/home-loans` landing — nesting removes that collision).
+- **14 pages moved:**
+  - Under `/accounts/`: `everyday-transaction`, `transact`, `save`, `flex-saver`, `growth-saver`,
+    `joint-bank-accounts`.
+  - Under `/benefits/`: `add-ons`, `my-accounts`, `security`.
+  - Under `/home-loans/`: `explore-loans`, `refinance-calculator`.
+  - Under `/support/`: `feedback-complaints`, `home-loans` (was `support-home-loans`).
+  - Under `/support/home-loans/`: `eligibility` (3 levels deep, matching source's
+    `support/home-loans/eligibility/eligibility-requirements` — the "eligibility" segment alone
+    isn't an independent page in source, it 404s/redirects to the home-loans landing, confirmed
+    by probing `/plus/support/home-loans/eligibility/` directly).
+- **12 pages confirmed flat in source, left at root:** `accounts`, `benefits`, `home-loans`,
+  `support` (the 4 landing pages), `new-to-australia`, `interest-fees`, `coaches`,
+  `switch-to-plus`, `download`, `privacy`, `terms-conditions` — each verified individually via
+  `curl` against the live source rather than assumed from nav groupings (nav's conceptual
+  "Support"/"Why Plus" groupings do **not** always match the actual URL hierarchy).
+- **Execution:** moved `drafts/<slug>.plain.html` + `deploy/<slug>.html` into matching
+  subdirectories (confirmed a file `support/home-loans.html` and a nested folder
+  `support/home-loans/eligibility.html` coexist fine — files and folders of the same base name
+  don't collide, in the local filesystem, in DA's source storage, or in the aem-cli dev server's
+  path resolution — verified all three). Then a single sed pass rewrote every local-relative
+  `href="/<old-slug>"` to its new nested path across **all** `drafts/*.plain.html`,
+  `deploy/*.html`, and the root `nav.plain.html`/`footer.plain.html` — 58 files touched, using
+  exact quote-delimited string matching (no fragment/anchor variants existed, confirmed by a
+  pre-check) so there was no risk of partial-path collisions between old slugs.
+- **DA sync:** uploaded all 14 pages to their new nested DA paths (201 Created + 200 preview each),
+  uploaded the updated `nav`/`footer`, then deleted the 14 old flat DA source docs (204) **and**
+  their cached preview entries via the Admin API's preview-delete endpoint (204) — source deletion
+  alone doesn't retire an already-generated preview; both were needed for the old flat paths to
+  actually start 404ing instead of serving stale content.
+- **Caught a real gap during verification, not before:** a site-wide link-integrity sweep (fetch
+  every page's `.plain.html`, extract every local `href`, HTTP-check each one) found 2 stray
+  broken links on `new-to-australia` and `switch-to-plus` — these pages weren't among the 14
+  moved, but their **body content** cross-linked to pages that moved (`/security`,
+  `/joint-bank-accounts`, `/my-accounts`), and the sed pass had correctly fixed those links
+  locally, but they were never re-uploaded since the sync loop only covered the 14 moved pages
+  + nav/footer, not every OTHER page whose links happened to change. Found and fixed by diffing
+  "every deploy file containing a new nested href" against "every file already re-uploaded" — the
+  2-file delta. Re-uploaded both; re-ran the full sweep — **0 issues across all 26 pages**.
+- **Verification:** all 26 pages HTTP 200 (local + DA preview); all 14 old flat paths now 404 on
+  DA preview; a full site-wide crawl of every page's every local link — 0 broken links; broken-image
+  HTTP-status check across all 14 moved pages — 0 broken; mega-menu's rendered `<a href>`s on the
+  live homepage spot-checked and confirmed pointing at the new nested paths; `npm run lint` clean
+  (no code files touched — this was a pure content/path restructure).
+- **Not done (explicitly out of scope for this pass, tracked below):** `redirects.json` for the
+  14 retired flat paths. The project isn't published to `.aem.live` yet (nothing external can be
+  pointing at the old preview URLs), and DA's sheet-authoring format for `/redirects` wasn't
+  validated in this session — attempting it blind risked shipping a malformed redirects doc.
+  Tracked as a pending item to do properly (author as a real DA sheet, not guessed JSON) before
+  the first live publish.
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (24 blocks incl. `table`) + measured tokens +
   all fidelity fixes + the DA class-stripping structural-selector pattern + the T22 hero/full-bleed
   viewport fixes. Latest commit `411428c`.
-- **On DA preview (content):** the **entire 25-page site** — home, accounts, benefits, home-loans,
-  support + all 21 remaining sub-pages + nav/footer — all previewing at `aem.page`; every slug
-  HTTP 200, verified 0 broken images (checked via direct HTTP status on every image URL, not
-  browser `.complete` which false-positives on lazy-loaded images). Footer acknowledgement art +
-  QR PNGs live under DA `/media`.
-- **Nav/footer:** internal links point at local migrated slugs; footer now includes the
-  acknowledgement-of-country card and the "ANZ Plus Credit Guide" link.
+- **On DA preview (content):** the **entire 26-page site** now with a **proper nested hierarchy**
+  matching source (`/accounts/*`, `/benefits/*`, `/home-loans/*`, `/support/*` children under
+  their landing pages; 12 pages confirmed genuinely flat in source stay at root) + nav/footer —
+  all previewing at `aem.page`; every slug HTTP 200, verified 0 broken images and 0 broken
+  internal links via a full site-wide crawl (T23). Footer acknowledgement art + QR PNGs live
+  under DA `/media`.
+- **Nav/footer:** mega-menu and footer links point at the new nested local paths matching
+  source's information architecture; footer includes the acknowledgement-of-country card and the
+  "ANZ Plus Credit Guide" link.
 - **Fidelity status:** every page has been individually compared against its live source at least
-  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Six genuine bugs found and
-  fixed across T20-T22 that would otherwise have silently shipped broken content — four DA
-  round-trip data-loss/degradation bugs (T20/T21) plus two viewport-dependent layout bugs only
-  visible at 2K+ widths (T22, hero sizing + full-bleed panel overflow/image-upscale).
+  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Six genuine content/layout
+  bugs found and fixed across T20-T22, plus a full IA restructure (T23) correcting every page's
+  URL depth to match source and fixing 2 stray cross-links surfaced only by a full-site crawl.
 - **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
 
 - [ ] Fold `import-work/DEFERRED-shared-changes.md` token suggestions into `:root`.
+- [ ] Author `redirects.json` as a proper DA sheet for the 14 retired flat paths (T23), before
+  first live publish — not urgent since nothing is published/external yet.
 - [ ] User review → publish to live.
 - [ ] Optional polish (accepted-as-is, lower priority): Support's "support categories" section uses
   a link-list where source shows large icon-illustration cards; interactive tools (refinance
@@ -523,8 +599,8 @@ viewport-dependent bugs invisible at normal desktop widths:
 
 ---
 
-*Last updated: 2026-08-07 (through T22: user-prompted 2K-viewport fidelity checks found the hero's
-height/max-width/text-inset were all measured wrong and a `box-sizing` bug causing full-bleed
-panels to overflow + upscale images ~2x at ultra-wide widths; both fixed and verified at
-1440/1920/2560px; live publish pending user review).*
+*Last updated: 2026-08-07 (through T23: restructured the flat site into a nested hierarchy matching
+source's information architecture — 14 pages moved under their correct parent landing pages,
+mega-menu/footer/cross-links updated and verified via a full site-wide link crawl (0 issues across
+26 pages); live publish pending user review).*
 
