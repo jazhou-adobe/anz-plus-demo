@@ -1,3 +1,6 @@
+/* stylelint-disable no-descending-specificity -- mega-menu rules are grouped by
+   component (featured vs link columns) for readability, not by specificity order */
+
 /* header and nav layout */
 header .nav-wrapper {
   background-color: var(--background-color);
@@ -185,6 +188,48 @@ header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
 }
 
+/* mega-menu — mobile base (stacked inside the full-screen nav) */
+.mega .mega-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mega .mega-heading {
+  margin: 16px 0 4px;
+  color: var(--brand-navy);
+  font-weight: 600;
+}
+
+.mega .mega-col > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--brand-navy);
+}
+
+.mega .mega-featured > a img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.mega .mega-featured > a strong {
+  font-weight: 600;
+}
+
+.mega .mega-badge {
+  margin-left: 6px;
+  border-radius: 999px;
+  padding: 1px 7px;
+  background: var(--link-color);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
 @media (width >= 900px) {
   header nav .nav-sections {
     display: block;
@@ -196,17 +241,23 @@ header nav .nav-sections ul > li > ul > li {
     align-self: unset;
   }
 
+  /* static so the mega-menu anchors to the full-width .nav-wrapper, not the <li> */
   header nav .nav-sections .nav-drop {
-    position: relative;
-    padding-right: 16px;
+    position: static;
     cursor: pointer;
   }
 
-  header nav .nav-sections .nav-drop::after {
+  header nav .nav-sections .nav-drop > a {
+    position: relative;
+    display: inline-block;
+    padding-right: 18px;
+  }
+
+  header nav .nav-sections .nav-drop > a::after {
     content: '';
     display: inline-block;
     position: absolute;
-    top: 0.5em;
+    top: 0.4em;
     right: 2px;
     transform: rotate(135deg);
     width: 6px;
@@ -216,9 +267,9 @@ header nav .nav-sections ul > li > ul > li {
     border-width: 2px 2px 0 0;
   }
 
-  header nav .nav-sections .nav-drop[aria-expanded='true']::after {
+  header nav .nav-sections .nav-drop[aria-expanded='true'] > a::after {
     top: unset;
-    bottom: 0.5em;
+    bottom: 0.4em;
     transform: rotate(315deg);
   }
 
@@ -230,51 +281,104 @@ header nav .nav-sections ul > li > ul > li {
 
   header nav .nav-sections .default-content-wrapper > ul > li {
     flex: 0 1 auto;
-    position: relative;
+    position: static;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul {
+  /* full-width mega-menu panel, positioned below the header bar */
+  header nav .nav-sections .default-content-wrapper > ul > li > .mega {
     display: none;
-    position: relative;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > .mega {
     display: block;
     position: absolute;
-    left: -16px;
-    width: 320px;
+    left: 0;
+    right: 0;
     top: 100%;
-    margin-top: 8px;
-    padding: 12px;
-    border-radius: 12px;
-    background-color: #f4f3f4;
-    box-shadow: 0 8px 24px rgb(29 22 76 / 12%);
+    z-index: 3;
     white-space: initial;
+    background: linear-gradient(to right, #f4f3f4 0 34%, #fff 34% 100%);
+    box-shadow: 0 16px 24px rgb(29 22 76 / 10%);
+    border-top: 1px solid #ececec;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
-    padding: 0;
+  .mega .mega-inner {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 32px 40px;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 40px 32px 48px;
   }
 
-  /* each submenu item: a bold title on its own line + a grey description line */
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a {
-    display: block;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #6f6f6f;
-    font-size: var(--body-font-size-xs);
-    font-weight: 400;
-    line-height: 1.4;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a:hover {
-    background-color: rgb(0 107 222 / 8%);
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li > a strong {
-    display: block;
+  .mega .mega-heading {
+    margin: 0 0 20px;
     color: var(--brand-navy);
     font-size: var(--body-font-size-s);
+    font-weight: 400;
+  }
+
+  /* featured (grey) column: icon + title + description cards */
+  .mega .mega-featured > a {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 0;
+    color: #6f6f6f;
+    font-size: var(--body-font-size-xs);
+  }
+
+  .mega .mega-featured > a::after {
+    content: none;
+  }
+
+  .mega .mega-featured > a img {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: #fff;
+    padding: 8px;
+    object-fit: contain;
+  }
+
+  .mega .mega-featured > a strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--heading-font-size-l);
+    font-weight: 500;
+  }
+
+  /* link columns: arrow rows */
+  .mega .mega-col > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    color: var(--brand-navy);
+    font-size: var(--body-font-size-s);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .mega .mega-col > a::after {
+    content: '→';
+    color: var(--brand-navy);
+    font-weight: 400;
+  }
+
+  .mega .mega-col > a:hover {
+    color: var(--link-color);
+  }
+
+  .mega .mega-badge {
+    margin-left: 8px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: var(--link-color);
+    color: #fff;
+    font-size: 11px;
     font-weight: 600;
   }
 }

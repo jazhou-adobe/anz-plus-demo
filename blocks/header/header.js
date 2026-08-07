@@ -109,6 +109,63 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
 }
 
 /**
+ * Transforms a nav-drop's flat authored <ul> into a full-width mega-menu.
+ * Authoring convention (survives the DA content pipeline — no classes needed):
+ *   - a text-only <li> (no link) starts a new column; its text is the column heading
+ *   - <li> items with an <a> belong to the current column
+ *   - the first column whose items carry an <img> renders as the grey "featured" panel
+ *     (icon + title + description cards); other columns render as arrow links
+ *   - a trailing "(NEW)" in a link's text becomes a NEW badge
+ * @param {Element} navSection The .nav-drop <li>
+ */
+function buildMegaMenu(navSection) {
+  const ul = navSection.querySelector(':scope > ul');
+  if (!ul) return;
+
+  const groups = [];
+  let current = null;
+  [...ul.children].forEach((li) => {
+    const link = li.querySelector(':scope > a');
+    if (!link) {
+      current = { heading: li.textContent.trim(), items: [] };
+      groups.push(current);
+    } else {
+      if (!current) { current = { heading: '', items: [] }; groups.push(current); }
+      current.items.push(link);
+    }
+  });
+  if (!groups.length) return;
+
+  const mega = document.createElement('div');
+  mega.className = 'mega';
+  const inner = document.createElement('div');
+  inner.className = 'mega-inner';
+  mega.append(inner);
+
+  groups.forEach((group, i) => {
+    const col = document.createElement('div');
+    col.className = 'mega-col';
+    const isFeatured = i === 0 && group.items[0] && group.items[0].querySelector('img');
+    if (isFeatured) col.classList.add('mega-featured');
+    if (group.heading) {
+      const h = document.createElement('p');
+      h.className = 'mega-heading';
+      h.textContent = group.heading;
+      col.append(h);
+    }
+    group.items.forEach((a) => {
+      if (/\(NEW\)/i.test(a.textContent)) {
+        a.innerHTML = a.innerHTML.replace(/\s*\(NEW\)/i, ' <span class="mega-badge">NEW</span>');
+      }
+      col.append(a);
+    });
+    inner.append(col);
+  });
+
+  ul.replaceWith(mega);
+}
+
+/**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
@@ -140,7 +197,11 @@ export default async function decorate(block) {
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
+      if (navSection.querySelector('ul')) {
+        navSection.classList.add('nav-drop');
+        // eslint-disable-next-line no-use-before-define
+        buildMegaMenu(navSection);
+      }
       navSection.addEventListener('click', () => {
         if (isDesktop.matches) {
           const expanded = navSection.getAttribute('aria-expanded') === 'true';
