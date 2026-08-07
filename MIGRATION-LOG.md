@@ -250,6 +250,24 @@ disjoint new-block namespaces (`acct-`/`why-`/`hls-`/`util-`), then a central de
   static grids; some full-bleed colour bands approximated. Content is complete/verbatim.
 - **Live publish still on hold** for user review.
 
+### T15 — Header mega-menu rebuild (user-flagged) ✅
+The earlier "dropdown" was a narrow single-column list; the source is a **full-width mega-menu**:
+a grey left panel of icon+title+description cards, plus "Explore more" and "I want to" arrow-link
+columns (with a NEW badge). Rebuilt faithfully:
+- **Content:** re-authored `nav.plain.html` per section with a **DA-safe flat-list convention** —
+  a text-only `<li>` starts a column (its text = heading), items with an `<img>` become featured
+  cards, `(NEW)` becomes a badge. Extracted the real per-section structure + 14 mega-menu icons
+  from the live nav.
+- **Code:** `header.js` gained `buildMegaMenu()` (parses the flat list into a 3-column panel);
+  `header.css` lays out the full-width panel (grey-left gradient, icon cards, arrow links, badge),
+  anchored to `.nav-wrapper` by making the drop `<li>` static and moving the chevron to the link.
+  Committed to `main` (`cb24883`).
+- **Deploy:** mega icons mapped to source URLs; nav rebuilt + uploaded + previewed to DA.
+- **Verified on preview host:** full-width (1440px), 3 columns, 4 featured cards, NEW badge,
+  **0 broken icons**.
+- One stylelint `no-descending-specificity` rule waived file-scoped (component-grouped ordering,
+  not a defect).
+
 ## 8. Current status
 
 - **On `main` (code):** the full block library (23 blocks) + measured tokens + all fixes.
