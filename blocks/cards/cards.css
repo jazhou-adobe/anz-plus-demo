@@ -26,16 +26,70 @@
   object-fit: cover;
 }
 
-/* accounts-cards variant: icon illustration + eyebrow + heading + outline CTA */
+/* accounts-cards variant: large 2-up white cards on a grey band, with an
+   uppercase blue eyebrow, heading + outline CTA, and a large product
+   illustration anchored to the bottom of each card (matching the source). */
+main .section:has(.cards.accounts-cards) {
+  margin: 0;
+  padding: 48px 0;
+  background-color: #ececec;
+}
+
+.cards.accounts-cards > ul {
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
 .cards.accounts-cards > ul > li {
-  border-color: #e2e2e2;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-radius: 16px;
+  background-color: var(--background-color);
+  padding: 40px;
+  min-height: 420px;
+}
+
+.cards.accounts-cards .cards-card-body {
+  order: 1;
+  margin: 0;
+}
+
+.cards.accounts-cards .cards-card-image {
+  order: 2;
+  margin-top: auto;
+  padding-top: 24px;
+  text-align: center;
 }
 
 .cards.accounts-cards .cards-card-image img {
   aspect-ratio: auto;
   width: auto;
-  max-width: 60%;
+  max-width: 70%;
+  max-height: 220px;
+  margin: 0 auto;
   object-fit: contain;
+}
+
+.cards.accounts-cards .eyebrow {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-accent);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cards.accounts-cards h2 {
+  margin: 0 0 20px;
+  color: var(--text-color);
+  font-size: var(--heading-font-size-l);
 }
 
 .cards.accounts-cards a.button {
@@ -43,4 +97,10 @@
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
+}
+
+@media (width >= 900px) {
+  .cards.accounts-cards > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

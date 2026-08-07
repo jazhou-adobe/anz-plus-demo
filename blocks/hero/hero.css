@@ -91,3 +91,67 @@
     max-width: 480px;
   }
 }
+
+/* product variant — centered blue heading + subtext over white, with the
+   product/app screenshot shown as a normal image below (not a background).
+   Used on account/product landing pages (e.g. Accounts). */
+main > .section.hero-container:has(.hero.product) {
+  margin: 0 0 40px;
+}
+
+.hero.product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: unset;
+  padding: 48px 24px 0;
+  background-color: var(--background-color);
+  text-align: center;
+  overflow: visible;
+}
+
+.hero.product::before {
+  display: none;
+}
+
+.hero.product h1 {
+  max-width: 900px;
+  color: var(--brand-accent);
+}
+
+.hero.product p {
+  max-width: 720px;
+  color: var(--text-color);
+}
+
+.hero.product picture {
+  position: static;
+  z-index: auto;
+  order: 2;
+  margin-top: 32px;
+  max-width: 960px;
+  width: 100%;
+}
+
+.hero.product img {
+  position: static;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (width >= 900px) {
+  .hero.product {
+    padding: 64px 32px 0;
+    min-height: unset;
+  }
+
+  .hero.product h1 {
+    max-width: 900px;
+  }
+
+  .hero.product p {
+    max-width: 720px;
+  }
+}

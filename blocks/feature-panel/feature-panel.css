@@ -1,3 +1,7 @@
+/* stylelint-disable no-descending-specificity -- rules grouped by variant
+   (base / center / tint / colour panels) for readability; the :not() base
+   rule already excludes the colour variants, so there is no real conflict */
+
 .feature-panel {
   display: flex;
   flex-direction: column;
@@ -24,6 +28,33 @@
 .feature-panel .feature-panel-content h2,
 .feature-panel .feature-panel-content h3 {
   margin-top: 0;
+}
+
+/* source feature headings are brand-blue on light panels;
+   `center` product-name panels and solid colour panels override below */
+.feature-panel:not(.center, .blue, .navy) .feature-panel-content h1,
+.feature-panel:not(.center, .blue, .navy) .feature-panel-content h2,
+.feature-panel:not(.center, .blue, .navy) .feature-panel-content h3 {
+  color: var(--brand-accent);
+}
+
+/* uppercase blue eyebrow label above the heading */
+.feature-panel .feature-panel-content .eyebrow {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-accent);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.feature-panel.blue .feature-panel-content .eyebrow,
+.feature-panel.navy .feature-panel-content .eyebrow {
+  color: rgb(255 255 255 / 80%);
 }
 
 .feature-panel .feature-panel-content p {

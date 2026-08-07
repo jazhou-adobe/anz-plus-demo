@@ -1,3 +1,9 @@
+/* the "Explore …" heading that introduces the pill row is centered in the
+   source (the pills are already centered) */
+main .section:has(.pill-nav) .default-content-wrapper {
+  text-align: center;
+}
+
 .pill-nav ul {
   list-style: none;
   margin: 0;

@@ -1,31 +1,28 @@
+/* stylelint-disable no-descending-specificity -- footer rules are grouped by
+   section (logo / columns / legal / acknowledgement) for readability, not by
+   specificity order */
+
 footer {
   background-color: var(--light-color);
   font-size: var(--body-font-size-m);
   color: #000;
+  text-align: center;
 }
 
 footer .footer > div {
   margin: auto;
-  max-width: 1200px;
+  max-width: 1040px;
   padding: 40px 24px 24px;
 }
 
-/* section 1: logo */
+/* section 1: logo (centered) */
+footer .footer > div > div:first-child {
+  margin-bottom: 8px;
+}
+
 footer .footer > div > div:first-child img {
   height: 32px;
   width: auto;
-}
-
-/* section 3: app badges + legal text */
-footer .footer > div > div:last-child {
-  border-top: 1px solid rgb(29 22 76 / 12%);
-  padding-top: 24px;
-}
-
-footer .footer > div > div:last-child p:first-child img {
-  height: 40px;
-  width: auto;
-  margin-right: 12px;
 }
 
 /* section 2: link columns, authored as a `columns` block variant so the
@@ -35,6 +32,7 @@ footer .footer .columns.footer-links > div {
   display: grid;
   grid-template-columns: 1fr;
   gap: 32px 24px;
+  text-align: left;
 }
 
 footer .footer .columns.footer-links > div > div {
@@ -72,24 +70,80 @@ footer .footer p {
   margin: 0 0 12px;
 }
 
-/* legal / acknowledgement block: smaller muted print */
-footer .footer > div > div:last-child p:not(:first-child) {
+/* section 3: legal — app badges, copyright, advice (centered) */
+footer .footer > div > div:nth-child(3) {
+  border-top: 1px solid rgb(29 22 76 / 12%);
+  margin-top: 8px;
+  padding-top: 24px;
+}
+
+footer .footer > div > div:nth-child(3) p:first-child img {
+  height: 40px;
+  width: auto;
+  margin: 0 6px;
+  vertical-align: middle;
+}
+
+footer .footer > div > div:nth-child(3) p:not(:first-child) {
   color: #6f6f6f;
   font-size: var(--body-font-size-xs);
   line-height: 1.5;
+}
+
+/* section 4: acknowledgement of country — white card, art left of text */
+footer .footer .footer-acknowledgement {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 8px 0 40px;
+  text-align: center;
+}
+
+footer .footer .footer-acknowledgement p {
+  margin: 0;
+}
+
+footer .footer .footer-acknowledgement img {
+  width: 132px;
+  height: auto;
+  display: block;
+}
+
+footer .footer .footer-acknowledgement p:not(:first-child) {
+  color: #6f6f6f;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.5;
+}
+
+footer .footer .footer-acknowledgement a:any-link {
+  color: #6f6f6f;
+  font-size: inherit;
+  text-decoration: underline;
 }
 
 @media (width >= 600px) {
   footer .footer .columns.footer-links > div {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  footer .footer .footer-acknowledgement {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    column-gap: 24px;
+    padding: 24px 32px;
+    text-align: left;
+  }
+
+  footer .footer .footer-acknowledgement p:first-child {
+    grid-row: 1 / span 2;
+  }
 }
 
 @media (width >= 900px) {
-  footer .footer > div {
-    padding: 48px 32px 24px;
-  }
-
   footer .footer .columns.footer-links > div {
     grid-template-columns: repeat(4, 1fr);
   }

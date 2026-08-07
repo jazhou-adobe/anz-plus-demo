@@ -28,10 +28,24 @@
   object-fit: contain;
 }
 
+.feature-cards .feature-cards-body .eyebrow {
+  display: block;
+  margin: 0 0 4px;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--brand-accent);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .feature-cards .feature-cards-body h3,
 .feature-cards .feature-cards-body h4 {
   margin: 0;
   font-size: var(--heading-font-size-m);
+  color: var(--brand-accent);
 }
 
 .feature-cards .feature-cards-body p {
