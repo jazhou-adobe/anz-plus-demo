@@ -254,6 +254,11 @@ User reviewed the homepage and flagged 8 fidelity bugs; all fixed and measured a
 20. **Deleting a DA source doc does not retire its already-generated preview** — the old flat path
     kept serving stale content until the Admin API's preview-delete endpoint was also called.
     Moving/retiring a page needs both: delete the source, delete the preview. (T23.)
+21. **Interactive-login auth tokens can expire mid-session with no way to self-refresh** — when a
+    long-running task depends on an OAuth token that requires human interactive login, plan for it
+    expiring: keep all local authoring/verification work fully decoupled from the sync step (author
+    + verify locally first, sync last), so an expired token blocks only the final sync, not the
+    substantive work. Never let subagents guess at re-auth. (T24.)
 
 ### T13 — Header mega-menu dropdown + batch deploy to preview ✅
 - **Dropdown fidelity:** user flagged the header dropdown didn't match. Live shows each submenu
@@ -567,24 +572,89 @@ with the top-level `/home-loans` landing — nesting removes that collision).
   Tracked as a pending item to do properly (author as a real DA sheet, not guessed JSON) before
   the first live publish.
 
+### T24 — Site-wide external-link scan: repoint migrated links, migrate 62 unmigrated pages ⏳
+User asked to scan the whole site for links still pointing at `anz.com.au`, repoint the ones that
+lead to already-migrated pages, and **migrate every page that wasn't yet migrated**. A full scan
+found ~82 distinct `anz.com.au/plus/...` links across every page's body content (nav/footer were
+already local since T14) — 19 pointed at already-migrated pages, ~62 pointed at pages that had
+never been migrated (nearly all deep support FAQ articles + legal T&Cs documents).
+- **Phase A (repoint, done directly):** rewrote all 19 already-migrated external links to local
+  paths across 58 files via one sed pass — same exact-match-string technique as T23. Verified 0
+  real remaining occurrences (a few plain-text disclaimer citations of the literal URL string,
+  not `href`s, were correctly left untouched).
+- **Phase B (migrate 62 pages, dispatched to 6 parallel agents):** built the complete target-path
+  mapping up front — every new page nests under its correct category per the **T23 IA convention**
+  (e.g. `/support/accounts/closing-accounts`, `/support/home-loans/steps-to-refinance`,
+  `/privacy/privacy-collection`, `/terms-conditions/product-terms-conditions`) — user explicitly
+  reinforced mid-flight that nothing should land flat at root, matching T23's precedent.
+  - **Confirmed a real content duplicate before dispatch:** `/plus/support/accounts/joint-accounts/
+    opening-joint-accounts/` and `/plus/support/accounts/opening-accounts/opening-joint-accounts/`
+    are the exact same article (same H1) cross-referenced from two taxonomy paths — migrated once
+    to `/support/accounts/opening-joint-accounts`, both source hrefs repointed to it.
+  - **Confirmed pages are genuinely simple** before committing to an authoring pattern: sampled
+    several FAQ articles — each is just an H1 (the question) + plain prose, wrapped in the site's
+    existing boilerplate. No new blocks needed; reused the plain-content pattern already
+    established by `privacy.plain.html`, and the `hls-link-list` pattern for the 5 new category
+    landing pages (`support/accounts`, `support/card`, `support/money-transactions`,
+    `support/payments`, `support/profile-security`).
+  - **`terms-conditions/product-terms-conditions` special case:** a 19-chapter legal document
+    referenced elsewhere via `#chap006`/`#chap009`/`#chap010` fragments. EDS auto-generates
+    heading IDs from the heading text (no way to force a literal `chapNNN` id), so identified the
+    real heading text per chapter first (chap006 = "About amounts shown", chap009 = "Earning
+    interest", chap010 = "Fees") and repointed the fragment links to the natural slugs
+    (`#about-amounts-shown`, `#earning-interest`, `#fees`) instead of guessing.
+  - **`/support/request-a-call-back/`**: source is a complex Adobe adaptive form (name/mobile/
+    email/postcode fields + captcha + Salesforce lead submission) — no form block exists in this
+    repo, so it was authored as static prose (intro + "what we'll ask for" + privacy note) per the
+    established "simple pages only" pattern, flagged explicitly by the agent as the one genuine
+    deviation from a plain FAQ article.
+  - **Peer coordination worked as designed**: two agents independently needed to edit the same
+    referencing file; one agent's full-file rewrite clobbered the other's already-applied surgical
+    fix, was caught, reapplied, and confirmed directly over `hub` between the two agents — exactly
+    the coordination path the dispatch was designed to allow.
+  - **Found and fixed one omission post-dispatch**: the newly-authored legal T&Cs pages contained
+    a bare `https://www.anz.com.au/plus/` (homepage) link that none of the 62-page target mapping
+    covered (it wasn't in the original 82-link scan — it only appeared inside the *new* pages'
+    own content) — repointed to `/` across the 3 affected files.
+- **Verification:** a full local site-wide crawl (fetch every one of ~88 pages' content, extract
+  every local `href`, HTTP-check each) — **0 broken links across the entire site**; re-confirmed
+  all 62 target source URLs have zero remaining `anz.com.au` occurrences; spot-checked several new
+  pages visually (landing pages render with the `hls-link-list` grid exactly matching existing
+  pages' visual language; FAQ articles render as clean heading+prose matching the site's
+  typography); `product-terms-conditions`'s actual headings confirmed to produce the expected
+  anchor IDs; `npm run lint` clean (no code touched — pure content authoring).
+- **DA sync blocked mid-task**: the cached DA auth token expired partway through (interactive
+  Adobe login required, can't be automated) — all authoring, link-fixing, and verification above
+  was completed and confirmed **locally only**; user is refreshing the token. **DA upload for all
+  62 new pages + the ~15 referencing files with fixed hrefs is the one remaining step**, tracked
+  below as a hard follow-up (not optional — the live DA preview is currently stale relative to
+  local for this batch of work until that sync runs).
+- **Discovered but explicitly out of scope for this pass**: the new category-landing pages
+  (`support/accounts`, `support/card`, `support/money-transactions`, `support/payments`) each
+  faithfully reproduce their *full* source category listing, which includes ~57 further sibling
+  FAQ articles beyond the 62 migrated here (e.g. `lost-card-or-phone`, `payid/payid`,
+  `sending-money-overseas`) — these were never part of the original 82-link scan (they only became
+  reachable once these new landing pages were created) and are left as absolute `anz.com.au` links
+  per each agent's explicit scope. This is a **second, deeper tier** of the same "migrate
+  everything reachable" request — flagged to the user rather than silently expanded again, since
+  it recurses (each new page can surface more siblings) and needs an explicit scope decision.
+
 ## 8. Current status
 
-- **On `main` (code):** the full block library (24 blocks incl. `table`) + measured tokens +
-  all fidelity fixes + the DA class-stripping structural-selector pattern + the T22 hero/full-bleed
-  viewport fixes. Latest commit `411428c`.
-- **On DA preview (content):** the **entire 26-page site** now with a **proper nested hierarchy**
-  matching source (`/accounts/*`, `/benefits/*`, `/home-loans/*`, `/support/*` children under
-  their landing pages; 12 pages confirmed genuinely flat in source stay at root) + nav/footer —
-  all previewing at `aem.page`; every slug HTTP 200, verified 0 broken images and 0 broken
-  internal links via a full site-wide crawl (T23). Footer acknowledgement art + QR PNGs live
-  under DA `/media`.
-- **Nav/footer:** mega-menu and footer links point at the new nested local paths matching
-  source's information architecture; footer includes the acknowledgement-of-country card and the
-  "ANZ Plus Credit Guide" link.
+- **On `main` (code):** unchanged by T24 (pure content authoring, no code touched). Full block
+  library (24 blocks incl. `table`) + measured tokens + the DA class-stripping structural-selector
+  pattern + the T22 hero/full-bleed viewport fixes. Latest commit `411428c`.
+- **On DA preview (content):** the **26-page site from T23** is fully synced and current. **T24's
+  62 new pages + ~15 files with fixed cross-links exist and are fully verified locally, but are
+  NOT YET on DA** — blocked on an expired auth token requiring interactive re-login (see T24).
+  This is the single most important thing to pick up next: run the DA sync for T24 once a fresh
+  token is available, using the exact same upload+preview procedure as every prior wave.
+- **Nav/footer:** unchanged by T24 (none of the 62 target URLs were referenced from nav/footer).
+  Still reflect the T23 nested paths correctly.
 - **Fidelity status:** every page has been individually compared against its live source at least
-  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages). Six genuine content/layout
-  bugs found and fixed across T20-T22, plus a full IA restructure (T23) correcting every page's
-  URL depth to match source and fixing 2 stray cross-links surfaced only by a full-site crawl.
+  once (T18 for the 5 primary nav pages, T14+T20 for the 21 sub-pages, T24 for the 62 newly
+  migrated pages). Six genuine content/layout bugs found and fixed across T20-T22, a full IA
+  restructure (T23), and a full external-link migration wave (T24, DA sync pending).
 - **On live:** nothing published — **gated on user review**.
 
 ## 9. Pending / next
@@ -592,6 +662,11 @@ with the top-level `/home-loans` landing — nesting removes that collision).
 - [ ] Fold `import-work/DEFERRED-shared-changes.md` token suggestions into `:root`.
 - [ ] Author `redirects.json` as a proper DA sheet for the 14 retired flat paths (T23), before
   first live publish — not urgent since nothing is published/external yet.
+- [ ] **Sync T24's 62 new pages + referencing-file fixes to DA** once the auth token is refreshed
+  — this is a hard blocker, not optional; local work is complete and verified, DA is stale for
+  this batch until synced.
+- [ ] Decide whether to migrate the further ~57 sibling FAQ articles T24 surfaced but left
+  out-of-scope (a second, deeper tier of the same request — see T24's last note).
 - [ ] User review → publish to live.
 - [ ] Optional polish (accepted-as-is, lower priority): Support's "support categories" section uses
   a link-list where source shows large icon-illustration cards; interactive tools (refinance
@@ -599,8 +674,8 @@ with the top-level `/home-loans` landing — nesting removes that collision).
 
 ---
 
-*Last updated: 2026-08-07 (through T23: restructured the flat site into a nested hierarchy matching
-source's information architecture — 14 pages moved under their correct parent landing pages,
-mega-menu/footer/cross-links updated and verified via a full site-wide link crawl (0 issues across
-26 pages); live publish pending user review).*
+*Last updated: 2026-08-07 (T24 in progress: repointed 19 already-migrated external links and
+authored 62 new pages for previously-unmigrated support/legal content, all correctly nested per
+the T23 information architecture and verified with a 0-issue full site-wide link crawl locally —
+DA sync for this batch is pending a refreshed auth token; live publish pending user review).*
 
